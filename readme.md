@@ -26,12 +26,10 @@ console.log(account.toObject())
 ## Classes
 
 Aptos Core Client implements next classes:
-+ **HexString** - manipulate with address value
 + **Account** - class for work with Aptos account (create, keys)
 + **Faucet** - client to Aptos faucet
 + **Rest** - main API class
 
-### HexString
 ### Account
 ### Faucet
 ### Rest
