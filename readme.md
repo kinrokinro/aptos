@@ -88,3 +88,55 @@ const rest = new RestClient(NODE_URL)
 ```
 
 #### Interact with Accounts
+
+The next methods provide work with Aptos account:
++ `getAccount()`
++ `getAccountResources()`
++ `getAccountResourcesObject()`
++ `getAccountResource()`
++ `getAccountBalance()`
++ `getAccountModules()`
++ `getAccountEvents()`
++ `getAccountEventsCoins()`
++ `getAccountEventsSentCoins()`
++ `getAccountEventsReceivedCoins()`
++ `getAccountEventsCoinsLast()`
++ `getAccountEventsSentCoinsLast()`
++ `getAccountEventsReceivedCoinsLast()`
++ `getAccountTransactions()`
++ `getAccountTransactionsLast()`
+
+General purpose methods:
++ `getEvents()`
++ `getTransactions()`
++ `sendCoins()`
++ `createAccount()`
++ `publishModule()`
++ `getMessage()`
++ `setMessage()`
+
+Methods to work with transactions
++ `generateTransaction()`
++ `signTransaction()`
++ `submitTransaction()`
++ `transactionPending()`
++ `waitForTransaction()`
+
+### Using
+1. Sending coins from one account to other
+```javascript
+import {Account, RestClient, FauceClient} from "@olton/aptos"
+
+const APTOS_URL = "https://fullnode.devnet.aptoslabs.com"
+const FAUCET_URL = "https://faucet.devnet.aptoslabs.com"
+
+const rest = new RestClient(APTOS_URL)
+const faucet = new FaucetClient(FAUCET_URL, rest)
+
+const alice = new Account()
+const bob = new Account()
+
+await faucet.fundAddress(alice.address(), 1_000)
+
+await rest.sendCoins(alice, bob.address())
+```

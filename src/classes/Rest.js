@@ -3,6 +3,7 @@ import assert from "assert"
 import Nacl from "tweetnacl"
 import {hexAddress} from "./HexString.js";
 import {sleep} from "../helpers/sleep.js";
+import {Account} from "./Account.js";
 
 const {sign} = Nacl
 
@@ -94,14 +95,6 @@ export class RestClient {
         return await this.getAccountEventsCoinsLast(address, COINS_RECEIVED, limit, coin)
     }
 
-    async accountTransactions(accountAddress, limit = 25, start = 0){
-        const response = await fetch(`${this.url}/accounts/${accountAddress}/transactions?limit=${limit}&start=${start}`, {method: "GET"})
-        if (response.status !== 200) {
-            assert(response.status === 200, await response.text())
-        }
-        return await response.json()
-    }
-
     async getAccountTransactions(address, query = {limit: 25, start: 0}){
         return await this.exec(`accounts/${address}/transactions`, query)
     }
@@ -128,17 +121,18 @@ export class RestClient {
      * @param {String} sender
      * @param {Object} payload
      * @param {Integer} exp
+     * @param {Object} gas
      * @returns {Promise<{sequence_number: string, gas_currency_code: string, sender: string, payload: {}, gas_unit_price: string, max_gas_amount: string, expiration_timestamp_secs: string}>}
      */
-    async generateTransaction(sender = "", payload = {}, exp = 600){
+    async generateTransaction(sender = "", payload = {}, exp = 600, gas = {max: 1000, unitPrice: 1, currency: "XUS"}){
         const account = await this.getAccount(sender)
         const seqNum = parseInt(account["sequence_number"])
         return {
-            "sender": `0x${sender}`,
+            "sender": `${hexAddress(sender)}`,
             "sequence_number": seqNum.toString(),
-            "max_gas_amount": "1000",
-            "gas_unit_price": "1",
-            "gas_currency_code": "XUS",
+            "max_gas_amount": gas.max.toString(),
+            "gas_unit_price": gas.unitPrice.toString(),
+            "gas_currency_code": gas.currency,
             "expiration_timestamp_secs": (Math.floor(Date.now() / 1000) + exp).toString(), // Unix timestamp, in seconds + 10 minutes ???
             "payload": payload,
         }
@@ -166,8 +160,8 @@ export class RestClient {
         const signatureHex = Buffer.from(signature).toString("hex").slice(0, 128)
         txnRequest["signature"] = {
             "type": "ed25519_signature",
-            "public_key": `0x${accountFrom.pubKey()}`,
-            "signature": `0x${signatureHex}`,
+            "public_key": `${hexAddress(accountFrom.pubKey())}`,
+            "signature": `${hexAddress(signatureHex)}`,
         }
         return txnRequest
     }
@@ -226,17 +220,26 @@ export class RestClient {
      * Transfer a given coin amount from a given Account to the recipient's account address.
      *    Returns the sequence number of the transaction used to transfer
      * @param {Account} accountFrom
-     * @param {string} recipient
-     * @param {number} amount
+     * @param {Account || String} recipient
+     * @param {Number} amount
+     * @param {String} coin
      * @returns {Promise<string>}
      */
-    async sendCoins(accountFrom, recipient = "", amount = 0){
+    async sendCoins(accountFrom, recipient, amount = 0, coin = 'TestCoin'){
+        let receiver
+
+        if (recipient instanceof Account) {
+            receiver = recipient.address()
+        } else {
+            receiver = hexAddress(recipient)
+        }
+
         const payload = {
             type: "script_function_payload",
-            function: "0x1::TestCoin::transfer",
+            function: `0x1::${coin}::transfer`,
             type_arguments: [],
             arguments: [
-                `0x${recipient}`,
+                receiver,
                 amount.toString(),
             ]
         };
@@ -258,8 +261,8 @@ export class RestClient {
             "function": "0x1::AptosAccount::create_account",
             "type_arguments": [],
             "arguments": [
-                "0x" + accountNew.address(),
-                "0x" + accountNew.pubKey(), // ???
+                hexAddress(accountNew.address()),
+                hexAddress(accountNew.pubKey()), // ???
             ]
         }
         const txnRequest = await this.generateTransaction(accountFrom.address(), payload)
@@ -278,7 +281,7 @@ export class RestClient {
         const payload = {
             "type": "module_bundle_payload",
             "modules": [
-                {"bytecode": `0x${moduleHex}`},
+                {"bytecode": `${hexAddress(moduleHex)}`},
             ],
         }
         const txnRequest = await this.generateTransaction(accountFrom.address(), payload)
@@ -294,7 +297,7 @@ export class RestClient {
      * @returns {Promise<*>}
      */
     async getMessage(contractAddress, accountAddress){
-        const resource = await this.getAccountResource(accountAddress, `0x${contractAddress}::Message::MessageHolder`);
+        const resource = await this.getAccountResource(accountAddress, `${hexAddress(contractAddress)}::Message::MessageHolder`);
         return resource["data"]["message"]
     }
 
@@ -308,7 +311,7 @@ export class RestClient {
     async setMessage(contractAddress, accountFrom, message){
         let payload = {
             "type": "script_function_payload",
-            "function": `0x${contractAddress}::Message::set_message`,
+            "function": `${hexAddress(contractAddress)}::Message::set_message`,
             "type_arguments": [],
             "arguments": [
                 Buffer.from(message, "utf-8").toString("hex")
