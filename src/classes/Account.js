@@ -70,5 +70,6 @@ export class Account {
     }
 }
 
+Account.fromSeed = (seed) => new Account(seed)
 Account.fromObject = (accountObject) => new Account(accountObject.privateKey)
 Account.fromMnemonic = (mnemonic) => new Account(mnemonicToEntropy(mnemonic))

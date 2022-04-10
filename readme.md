@@ -8,21 +8,6 @@ To install Aptos Core Client
 npm install --save @olton/aptos
 ```
 
-ES
-```javascript
-import {Accout} from "@olton/aptos"
-
-const account = new Accout()
-console.log(account.toObject())
-```
-```javascript
-{
-  address: '0xdf518afb07...',
-  publicKey: '0xcb289da0eb...',
-  privateKey: 'f50ac3b4ce3c...',
-  mnemonic: 'vital figure unfold...'
-}
-```
 ## Classes
 
 Aptos Core Client implements next classes:
@@ -31,5 +16,60 @@ Aptos Core Client implements next classes:
 + **Rest** - main API class
 
 ### Account
+
+This class is intended to work with Aptos address. With this class you can create an Aptos address or import one from mnemonic. 
+
+**Class methods:**
++ `privateKey()` - return an address private key
++ `address()` - return an Aptos address
++ `authKey()` - return an auth key for the address
++ `pubKey()` - return a public key for the address
++ `signBuffer()` - signing byte buffer
++ `signHexString()` - signing string
++ `mnemonic()` - generate a address mnemonic
++ `toObject()` - export address to specified AccountObject
+
+**Class static methods:**
++ `Account.fromMenmonic(...)` - import account from mnemonic
++ `Account.fromObject(...)` - import account from AccountObject
++ `Account.fromSeed(...)` - import account from account private key (seed)
+
+**Using:**
+```javascript
+import {Accout} from "@olton/aptos"
+
+// Create new account
+const account = new Accout()
+console.log(account.toObject())
+
+// Restore account from Menmonic
+const account = Accout.fromMnemonic("word1 word2 word3 ...")
+
+// Restore account from Seed (private key)
+const account = Accout.fromSeed("1234567890")
+
+```
+Output:
+```javascript
+{
+    address: "0x1234567890",
+    publicKey: "0x1234567890",
+    privateKey: "1234567890",
+    mnemonic: "word1 word2 word3 ..."
+}
+```
+
 ### Faucet
+**FaucetClient** represents one public method `fundAddress(address, amount)` to funding (sponsoring) address from Aptos Faucet.
+
+Using
+```javascript
+import {FaucetClient} from "@olton/aptos"
+
+const rest = new RestClient('https://fullnode.devnet.aptoslabs.com')
+const faucet = new FaucetClient('https://faucet.devnet.aptoslabs.com', rest)
+
+await faucet.fundAddress("0x12345", 1_000_000)
+```
+
 ### Rest
