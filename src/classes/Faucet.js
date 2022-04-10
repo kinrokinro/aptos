@@ -12,7 +12,7 @@ export class FaucetClient {
 
     /** This creates an account if it does not exist and mints the specified amount of
      coins into that account */
-    async fundAccount(authKey = "", amount = 0) {
+    async fundAddress(address = "", amount = 0) {
         const url = `${this.url}/mint?amount=${amount}&auth_key=${authKey}`
         const response = await fetch(url, {method: "POST"})
         if (response.status !== 200) {

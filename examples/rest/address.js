@@ -35,3 +35,6 @@ const hexAddress = "0x6a564403b90e83e0ecd9ec59446e4eed644a71fdd50441dacdf21fc03c
 // console.log(await rest.getAccountEventsReceivedCoinsLast(address, 1))
 
 
+console.log("=== Transactions ===")
+// console.log(await rest.getAccountTransactions(address, {limit: 1}))
+console.log(await rest.getAccountTransactionsLast(address, 1))
