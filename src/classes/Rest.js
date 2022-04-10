@@ -122,12 +122,13 @@ export class RestClient {
     /**
      * Generates a transaction request that can be submitted to produce a raw transaction that
      *    can be signed, which upon being signed can be submitted to the blockchain
-     * @param sender
-     * @param payload
+     * @param {String} sender
+     * @param {Object} payload
+     * @param {Integer} exp
      * @returns {Promise<{sequence_number: string, gas_currency_code: string, sender: string, payload: {}, gas_unit_price: string, max_gas_amount: string, expiration_timestamp_secs: string}>}
      */
-    async generateTransaction(sender = "", payload = {}){
-        const account = await this.account(sender)
+    async generateTransaction(sender = "", payload = {}, exp = 600){
+        const account = await this.getAccount(sender)
         const seqNum = parseInt(account["sequence_number"])
         return {
             "sender": `0x${sender}`,
@@ -135,7 +136,7 @@ export class RestClient {
             "max_gas_amount": "1000",
             "gas_unit_price": "1",
             "gas_currency_code": "XUS",
-            "expiration_timestamp_secs": (Math.floor(Date.now() / 1000) + 600).toString(), // Unix timestamp, in seconds + 10 minutes ???
+            "expiration_timestamp_secs": (Math.floor(Date.now() / 1000) + exp).toString(), // Unix timestamp, in seconds + 10 minutes ???
             "payload": payload,
         }
     }
@@ -143,8 +144,8 @@ export class RestClient {
     /**
      * Converts a transaction request produced by `generate_transaction` into a properly signed
      *    transaction, which can then be submitted to the blockchain
-     * @param accountFrom
-     * @param txnRequest
+     * @param {Account} accountFrom
+     * @param {Object} txnRequest
      * @returns {Promise<{}>}
      */
     async signTransaction(/* Account */ accountFrom, txnRequest = {}){
@@ -170,7 +171,7 @@ export class RestClient {
 
     /**
      * Submits a signed transaction to the blockchain
-     * @param txnRequest
+     * @param {Object} txnRequest
      * @returns {Promise<unknown>}
      */
     async submitTransaction(txnRequest = {}){
