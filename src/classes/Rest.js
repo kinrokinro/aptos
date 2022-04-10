@@ -2,7 +2,7 @@ import fetch from "cross-fetch"
 import assert from "assert"
 import Nacl from "tweetnacl"
 import {hexAddress} from "./HexString.js";
-import {qunit} from "mocha/lib/interfaces/index.js";
+import {sleep} from "../helpers/sleep.js";
 
 const {sign} = Nacl
 
@@ -214,7 +214,7 @@ export class RestClient {
         let count = 0
         while (await this.transactionPending(txnHash)) {
             assert(count < 10)
-            await new Promise(resolve => setTimeout(resolve, 1000))
+            await sleep(1000)
             count += 1
             if (count >= 10) {
                 throw new Error(`Waiting for transaction ${txnHash} timed out!`)

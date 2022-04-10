@@ -73,3 +73,18 @@ await faucet.fundAddress("0x12345", 1_000_000)
 ```
 
 ### Rest
+
+The Rest client represents methods to interact with Aptos API. The methods relate to working with:
++ Accounts
++ Events
++ Transactions
+
+Using
+```javascript
+import {RestClient} from "@olton/aptos"
+
+const NODE_URL = 'https://......'
+const rest = new RestClient(NODE_URL)
+```
+
+#### Interact with Accounts
