@@ -69,7 +69,9 @@ import {FaucetClient} from "@olton/aptos"
 const rest = new RestClient('https://fullnode.devnet.aptoslabs.com')
 const faucet = new FaucetClient('https://faucet.devnet.aptoslabs.com', rest)
 
-await faucet.fundAddress("0x12345", 1_000_000)
+const alice = new Account()
+
+await faucet.fundAddress(alice.authKey(), 1_000_000)
 ```
 
 ### Rest
