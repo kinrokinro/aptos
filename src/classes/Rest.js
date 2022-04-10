@@ -94,10 +94,6 @@ export class RestClient {
         return await this.getAccountEventsCoinsLast(address, COINS_RECEIVED, limit, coin)
     }
 
-    async getEvents(eventKey){
-        return await this.exec(`events/${hexAddress(eventKey)}`)
-    }
-
     async accountTransactions(accountAddress, limit = 25, start = 0){
         const response = await fetch(`${this.url}/accounts/${accountAddress}/transactions?limit=${limit}&start=${start}`, {method: "GET"})
         if (response.status !== 200) {
@@ -118,6 +114,13 @@ export class RestClient {
         return await this.exec(`accounts/${address}/transactions`, {limit, start})
     }
 
+    async getEvents(eventKey){
+        return await this.exec(`events/${hexAddress(eventKey)}`)
+    }
+
+    async getTransactions(query = {limit: 25, start: 0}){
+        return await this.exec(`transactions`)
+    }
 
     /**
      * Generates a transaction request that can be submitted to produce a raw transaction that
