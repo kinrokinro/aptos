@@ -32,39 +32,39 @@ export class RestClient {
         return await response.json()
     }
 
-    async getAccount(address){
-        return await this.exec(`accounts/${hexAddress(address)}`)
+    async getAccount(addr){
+        return await this.exec(`accounts/${this.address(addr)}`)
     }
 
-    async getAccountResources(address, query = {version: null}){
-        return await this.exec(`accounts/${address}/resources`, query)
+    async getAccountResources(addr, query = {version: null}){
+        return await this.exec(`accounts/${this.address(addr)}/resources`, query)
     }
 
-    async getAccountResourcesObject(address, query = {version: null}){
+    async getAccountResourcesObject(addr, query = {version: null}){
         const result = {}
-        const resources = await this.exec(`accounts/${address}/resources`, query)
+        const resources = await this.exec(`accounts/${this.address(addr)}/resources`, query)
         for(let r of resources) {
             result[r.type] = r.data
         }
         return result
     }
 
-    async getAccountResource(address, res = null, query = {version: null}){
-        const resources = await this.getAccountResourcesObject(address, query)
+    async getAccountResource(addr, res = null, query = {version: null}){
+        const resources = await this.getAccountResourcesObject(this.address(addr), query)
         return res !== null && resources[res] ? resources[res] : null
     }
 
-    async getAccountBalance(address, coin = 'TestCoin', query = {version: null}){
-        const res = await this.getAccountResource(address, `0x1::${coin}::Balance`, query)
+    async getAccountBalance(add, coin = 'TestCoin', query = {version: null}){
+        const res = await this.getAccountResource(add, `0x1::${coin}::Balance`, query)
         return res ? res["coin"]["value"] : 0
     }
 
-    async getAccountModules(address, query = {version: null}){
-        return await this.exec(`accounts/${address}/modules`, query)
+    async getAccountModules(addr, query = {version: null}){
+        return await this.exec(`accounts/${this.address(addr)}/modules`, query)
     }
 
-    async getAccountEvents(address, eventStruct, fieldName, query){
-        return await this.exec(`accounts/${address}/events/${eventStruct}/${fieldName}`, query)
+    async getAccountEvents(addr, eventStruct, fieldName, query){
+        return await this.exec(`accounts/${this.address(addr)}/events/${eventStruct}/${fieldName}`, query)
     }
 
     async getAccountEventsCoins(address, type = COINS_SENT, coin = "TestCoin", query = {limit: 25, start: 0}){
@@ -95,16 +95,16 @@ export class RestClient {
         return await this.getAccountEventsCoinsLast(address, COINS_RECEIVED, limit, coin)
     }
 
-    async getAccountTransactions(address, query = {limit: 25, start: 0}){
-        return await this.exec(`accounts/${address}/transactions`, query)
+    async getAccountTransactions(addr, query = {limit: 25, start: 0}){
+        return await this.exec(`accounts/${this.address(addr)}/transactions`, query)
     }
 
-    async getAccountTransactionsLast(address, limit = 25, coin = 'TestCoin'){
-        const resources = await this.getAccountResource(address, `0x1::${coin}::TransferEvents`)
+    async getAccountTransactionsLast(addr, limit = 25, coin = 'TestCoin'){
+        const resources = await this.getAccountResource(addr, `0x1::${coin}::TransferEvents`)
         const totalSent = +(resources[COINS_SENT].counter || 0)
         const start = limit > totalSent ? 0 : totalSent - limit
 
-        return await this.exec(`accounts/${address}/transactions`, {limit, start})
+        return await this.getAccountTransactions(addr, {limit, start})
     }
 
     async getEvents(eventKey){
@@ -226,20 +226,12 @@ export class RestClient {
      * @returns {Promise<string>}
      */
     async sendCoins(accountFrom, recipient, amount = 0, coin = 'TestCoin'){
-        let receiver
-
-        if (recipient instanceof Account) {
-            receiver = recipient.address()
-        } else {
-            receiver = hexAddress(recipient)
-        }
-
         const payload = {
             type: "script_function_payload",
             function: `0x1::${coin}::transfer`,
             type_arguments: [],
             arguments: [
-                receiver,
+                this.address(recipient),
                 amount.toString(),
             ]
         };
@@ -251,8 +243,8 @@ export class RestClient {
 
     /**
      * Create a new account in blockchain
-     * @param accountFrom
-     * @param accountNew
+     * @param {Account} accountFrom
+     * @param {Account} accountNew
      * @returns {Promise<string>}
      */
     async createAccount(accountFrom, accountNew){
@@ -261,7 +253,7 @@ export class RestClient {
             "function": "0x1::AptosAccount::create_account",
             "type_arguments": [],
             "arguments": [
-                hexAddress(accountNew.address()),
+                accountNew.address(),
                 hexAddress(accountNew.pubKey()), // ???
             ]
         }
@@ -297,7 +289,7 @@ export class RestClient {
      * @returns {Promise<*>}
      */
     async getMessage(contractAddress, accountAddress){
-        const resource = await this.getAccountResource(accountAddress, `${hexAddress(contractAddress)}::Message::MessageHolder`);
+        const resource = await this.getAccountResource(this.address(accountAddress), `${this.address(contractAddress)}::Message::MessageHolder`);
         return resource["data"]["message"]
     }
 
@@ -311,7 +303,7 @@ export class RestClient {
     async setMessage(contractAddress, accountFrom, message){
         let payload = {
             "type": "script_function_payload",
-            "function": `${hexAddress(contractAddress)}::Message::set_message`,
+            "function": `${this.address(contractAddress)}::Message::set_message`,
             "type_arguments": [],
             "arguments": [
                 Buffer.from(message, "utf-8").toString("hex")
@@ -322,5 +314,17 @@ export class RestClient {
         const signedTxn = await this.signTransaction(accountFrom, txnRequest)
         const res = await this.submitTransaction(signedTxn)
         return res["hash"].toString()
+    }
+
+    address(a){
+        if (a instanceof Account) {
+            return a.address()
+        } else if (typeof a === "string") {
+            return hexAddress(a)
+        } else if (typeof a === "object" && a.address) {
+            return hexAddress(a.address)
+        } else {
+            throw new Error("Value is not an Aptos address or compatible object!")
+        }
     }
 }
