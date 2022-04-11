@@ -114,8 +114,6 @@ General purpose methods:
 + `sendCoins()`
 + `createAccount()`
 + `publishModule()`
-+ `getMessage()`
-+ `setMessage()`
 
 Methods to work with transactions
 + `generateTransaction()`

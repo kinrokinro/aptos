@@ -282,40 +282,6 @@ export class RestClient {
         return res["hash"].toString()
     }
 
-    /**
-     * Retrieve the resource Message
-     * @param contractAddress
-     * @param accountAddress
-     * @returns {Promise<*>}
-     */
-    async getMessage(contractAddress, accountAddress){
-        const resource = await this.getAccountResource(this.address(accountAddress), `${this.address(contractAddress)}::Message::MessageHolder`);
-        return resource["data"]["message"]
-    }
-
-    /**
-     * Potentially initialize and set the resource Message
-     * @returns {Promise<string>}
-     * @param contractAddress
-     * @param accountFrom
-     * @param message
-     */
-    async setMessage(contractAddress, accountFrom, message){
-        let payload = {
-            "type": "script_function_payload",
-            "function": `${this.address(contractAddress)}::Message::set_message`,
-            "type_arguments": [],
-            "arguments": [
-                Buffer.from(message, "utf-8").toString("hex")
-            ]
-        };
-
-        const txnRequest = await this.generateTransaction(accountFrom.address(), payload)
-        const signedTxn = await this.signTransaction(accountFrom, txnRequest)
-        const res = await this.submitTransaction(signedTxn)
-        return res["hash"].toString()
-    }
-
     address(a){
         if (a instanceof Account) {
             return a.address()
