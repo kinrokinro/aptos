@@ -32,6 +32,18 @@ export class RestClient {
         return await response.json()
     }
 
+    async getHealthy(){
+        const response = await fetch(`${this.url}/-/healthy`, {method: "GET"})
+        if (response.status !== 200) {
+            assert(response.status === 200, await response.text())
+        }
+        return await response.text()
+    }
+
+    async getLedger(){
+        return await this.exec(``)
+    }
+
     async getAccount(addr){
         return await this.exec(`accounts/${this.address(addr)}`)
     }
