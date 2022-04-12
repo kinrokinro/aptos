@@ -386,11 +386,11 @@ export class RestClient {
      * @param {Account} account
      * @param {String} receiver
      * @param {String} creator
-     * @param {Number} tokenCreationNum
+     * @param {Number} tokenId
      * @param {Number} amount
      * @returns {Promise<*>}
      */
-    async nftOfferToken(account, receiver, creator, tokenCreationNum, amount){
+    async nftOfferToken(account, receiver, creator, tokenId, amount){
         const payload = {
             type: "script_function_payload",
             function: `0x1::TokenTransfers::offer_script`,
@@ -398,7 +398,7 @@ export class RestClient {
             arguments: [
                 receiver,
                 creator,
-                tokenCreationNum.toString(),
+                tokenId.toString(),
                 amount.toString()
             ]
         };
@@ -410,10 +410,10 @@ export class RestClient {
      * @param {Account} account
      * @param {String} sender
      * @param {String} creator
-     * @param {Number} tokenCreationNum
+     * @param {Number} tokenId
      * @returns {Promise<*>}
      */
-    async nftClaimToken(account, sender, creator, tokenCreationNum){
+    async nftClaimToken(account, sender, creator, tokenId){
         const payload = {
             type: "script_function_payload",
             function: `0x1::TokenTransfers::claim_script`,
@@ -421,7 +421,7 @@ export class RestClient {
             arguments: [
                 sender,
                 creator,
-                tokenCreationNum.toString(),
+                tokenId.toString(),
             ]
         };
         return await this.submitTransactionHelper(account, payload)
@@ -432,10 +432,10 @@ export class RestClient {
      * @param {Account} account
      * @param {String} receiver
      * @param {String} creator
-     * @param {Number} tokenCreationNum
+     * @param {Number} tokenId
      * @returns {Promise<*>}
      */
-    async nftCancelTokenOffer(account, receiver, creator, tokenCreationNum){
+    async nftCancelTokenOffer(account, receiver, creator, tokenId){
         const payload = {
             type: "script_function_payload",
             function: `0x1::TokenTransfers::cancel_offer_script`,
@@ -443,7 +443,7 @@ export class RestClient {
             arguments: [
                 receiver,
                 creator,
-                tokenCreationNum.toString(),
+                tokenId.toString(),
             ]
         };
         return await this.submitTransactionHelper(account, payload)
