@@ -457,24 +457,49 @@ export class RestClient {
      * @returns {Promise<number>}
      */
     async getTokenId(creator, collectionName, tokenName){
-        const resources = this.getAccountResourcesObject(creator)
-        let collections = []
-        let tokens = []
+        const tokens = await this.getTokens(creator, collectionName)
 
-        if (resources["0x1::Token::Collections"]) {
-            collections = resources["0x1::Token::Collections"]["collections"]["data"]
-        }
-
-        for (let collection in collections) {
-            if (collections[collection]["key"] === collectionName) {
-                tokens = collections[collection]["value"]["tokens"]["data"];
+        if (tokens.length) {
+            for (let token of tokens.data) {
+                // ???
+                // if (tokens[token]["key"] === tokenName) {
+                //     return parseInt(tokens[token]["value"]["id"]["creation_num"]);
+                // }
             }
         }
-        for (let token in tokens) {
-            if (tokens[token]["key"] === tokenName) {
-                return parseInt(tokens[token]["value"]["id"]["creation_num"]);
-            }
-        }
+
         assert(false, "No token IDs for your request!");
+    }
+
+    async collectionExists(creator, collectionName){
+        const resource = await this.getAccountResource(creator, "0x1::Token::Collections")
+        if (resource) {
+            for(let c of resource["collections"]["data"]){
+                if (c.key === collectionName) {
+                    return c.value
+                }
+            }
+        }
+        return false
+    }
+
+    async getCollection(creator, collectionName){
+        return await this.collectionExists(creator, collectionName)
+    }
+
+    async getTokens(creator, collectionName){
+        const collection = await this.getCollection(creator, collectionName)
+        if (collection === false) {
+            return []
+        }
+        return collection["tokens"]["data"]
+    }
+
+    async getClaimedTokens(creator, collectionName){
+        const collection = await this.getCollection(creator, collectionName)
+        if (collection === false) {
+            return []
+        }
+        return collection["claimed_tokens"]["data"]
     }
 }

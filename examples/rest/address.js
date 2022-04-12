@@ -31,10 +31,14 @@ const hexAddress = "0x6a564403b90e83e0ecd9ec59446e4eed644a71fdd50441dacdf21fc03c
 // console.log(await rest.getAccountEventsReceivedCoins(address, undefined, {limit: 1}))
 // console.log(await rest.getAccountEventsCoinsLast(address, COINS_SENT, 2))
 // console.log(await rest.getAccountEventsCoinsLast(address, COINS_RECEIVED, 2))
-// console.log(await rest.getAccountEventsSentCoinsLast(address, 1))
+// console.log(await rest.getAccountEventsSentCoinsLast(address, 10))
 // console.log(await rest.getAccountEventsReceivedCoinsLast(address, 1))
 
 
-console.log("=== Transactions ===")
+// console.log("=== Transactions ===")
 // console.log(await rest.getAccountTransactions(address, {limit: 1}))
-console.log(await rest.getAccountTransactionsLast(address, 1))
+const tr = await rest.getAccountTransactionsLast(address, 25)
+for(let t of tr.reverse()) {
+    console.log(JSON.stringify(t, null, 4))
+}
+
