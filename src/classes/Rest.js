@@ -316,7 +316,7 @@ export class RestClient {
      * @param {String} uri
      * @returns {Promise<*>}
      */
-    async nftCreateUnlimitedCollection(account, description, name, uri){
+    async createUnlimitedCollection(account, description, name, uri){
         const payload = {
             type: "script_function_payload",
             function: `0x1::Token::create_unlimited_collection_script`,
@@ -340,7 +340,7 @@ export class RestClient {
      * @param {Integer} maximum
      * @returns {Promise<*>}
      */
-    async nftCreateCollection(account, description, name, uri, maximum){
+    async createCollection(account, description, name, uri, maximum){
         const payload = {
             type: "script_function_payload",
             function: `0x1::Token::create_finite_collection_script`,
@@ -365,7 +365,7 @@ export class RestClient {
      * @param {String} uri
      * @returns {Promise<*>}
      */
-    async nftCreateToken(account, collectionName, description, name, supply, uri){
+    async createToken(account, collectionName, description, name, supply, uri){
         const payload = {
             type: "script_function_payload",
             function: `0x1::Token::create_token_script`,
@@ -390,7 +390,7 @@ export class RestClient {
      * @param {Number} amount
      * @returns {Promise<*>}
      */
-    async nftOfferToken(account, receiver, creator, tokenId, amount){
+    async offerToken(account, receiver, creator, tokenId, amount){
         const payload = {
             type: "script_function_payload",
             function: `0x1::TokenTransfers::offer_script`,
@@ -413,7 +413,7 @@ export class RestClient {
      * @param {Number} tokenId
      * @returns {Promise<*>}
      */
-    async nftClaimToken(account, sender, creator, tokenId){
+    async claimToken(account, sender, creator, tokenId){
         const payload = {
             type: "script_function_payload",
             function: `0x1::TokenTransfers::claim_script`,
@@ -435,7 +435,7 @@ export class RestClient {
      * @param {Number} tokenId
      * @returns {Promise<*>}
      */
-    async nftCancelTokenOffer(account, receiver, creator, tokenId){
+    async cancelTokenOffer(account, receiver, creator, tokenId){
         const payload = {
             type: "script_function_payload",
             function: `0x1::TokenTransfers::cancel_offer_script`,
@@ -456,7 +456,7 @@ export class RestClient {
      * @param {String} tokenName
      * @returns {Promise<number>}
      */
-    async nftGetTokenId(creator, collectionName, tokenName){
+    async getTokenId(creator, collectionName, tokenName){
         const resources = this.getAccountResourcesObject(creator)
         let collections = []
         let tokens = []

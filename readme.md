@@ -120,13 +120,13 @@ Modules:
 + `publishModule()`
 
 NFT:
-+ `nftCreateUnlimitedCollection()`
-+ `nftCreateCollection()`
-+ `nftCreateToken()`
-+ `nftOfferToken()`
-+ `nftClaimToken()`
-+ `nftCancelTokenOffer()`
-+ `nftGetTokenId()`
++ `createUnlimitedCollection()`
++ `createCollection()`
++ `createToken()`
++ `offerToken()`
++ `claimToken()`
++ `cancelTokenOffer()`
++ `getTokenId()`
 
 Methods to work with transactions
 + `generateTransaction()`
