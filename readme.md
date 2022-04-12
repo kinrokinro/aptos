@@ -111,9 +111,22 @@ The next methods provide work with Aptos account:
 General purpose methods:
 + `getEvents()`
 + `getTransactions()`
-+ `sendCoins()`
 + `createAccount()`
+
+Coins:
++ `sendCoins()`
+
+Modules:
 + `publishModule()`
+
+NFT:
++ `nftCreateUnlimitedCollection()`
++ `nftCreateCollection()`
++ `nftCreateToken()`
++ `nftOfferToken()`
++ `nftClaimToken()`
++ `nftCancelTokenOffer()`
++ `nftGetTokenId()`
 
 Methods to work with transactions
 + `generateTransaction()`
@@ -121,6 +134,7 @@ Methods to work with transactions
 + `submitTransaction()`
 + `transactionPending()`
 + `waitForTransaction()`
++ `submitTransactionHelper()`
 
 ### Using
 1. Sending coins from one account to other
