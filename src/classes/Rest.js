@@ -228,6 +228,14 @@ export class RestClient {
         }
     }
 
+    async submitTransactionHelper(account, payload){
+        const txnRequest = await this.generateTransaction(account.address(), payload)
+        const signedTxn = await this.signTransaction(account, txnRequest)
+        const res = await this.submitTransaction(signedTxn)
+        await this.waitForTransaction(res["hash"])
+        return res["hash"].toString()
+    }
+
     /**
      * Transfer a given coin amount from a given Account to the recipient's account address.
      *    Returns the sequence number of the transaction used to transfer
@@ -247,10 +255,7 @@ export class RestClient {
                 amount.toString(),
             ]
         };
-        const txnRequest = await this.generateTransaction(accountFrom.address(), payload)
-        const signedTxn = await this.signTransaction(accountFrom, txnRequest)
-        const res = await this.submitTransaction(signedTxn)
-        return res["hash"].toString()
+        return await this.submitTransactionHelper(accountFrom, payload)
     }
 
     /**
@@ -269,10 +274,7 @@ export class RestClient {
                 hexAddress(accountNew.pubKey()), // ???
             ]
         }
-        const txnRequest = await this.generateTransaction(accountFrom.address(), payload)
-        const signedTxn = await this.signTransaction(accountFrom, txnRequest)
-        const res = await this.submitTransaction(signedTxn)
-        return res["hash"].toString()
+        return await this.submitTransactionHelper(accountFrom, payload)
     }
 
     /**
@@ -288,10 +290,7 @@ export class RestClient {
                 {"bytecode": `${hexAddress(moduleHex)}`},
             ],
         }
-        const txnRequest = await this.generateTransaction(accountFrom.address(), payload)
-        const signedTxn = await this.signTransaction(accountFrom, txnRequest)
-        const res = await this.submitTransaction(signedTxn)
-        return res["hash"].toString()
+        return await this.submitTransactionHelper(accountFrom, payload)
     }
 
     address(a){
@@ -304,5 +303,178 @@ export class RestClient {
         } else {
             throw new Error("Value is not an Aptos address or compatible object!")
         }
+    }
+
+    /* ===================================== NFT ====================================== */
+
+    /**
+     * Create Unlimited NFT collection
+     * @param {Account} account
+     * @param {String} description
+     * @param {String} name
+     * @param {String} uri
+     * @param {String} uri
+     * @returns {Promise<*>}
+     */
+    async nftCreateUnlimitedCollection(account, description, name, uri){
+        const payload = {
+            type: "script_function_payload",
+            function: `0x1::Token::create_unlimited_collection_script`,
+            type_arguments: [],
+            arguments: [
+                Buffer.from(description).toString("hex"),
+                Buffer.from(name).toString("hex"),
+                Buffer.from(uri).toString("hex"),
+            ]
+        };
+        return await this.submitTransactionHelper(account, payload)
+    }
+
+    /**
+     * Create Limited NFT collection
+     * @param {Account} account
+     * @param {String} description
+     * @param {String} name
+     * @param {String} uri
+     * @param {String} uri
+     * @param {Integer} maximum
+     * @returns {Promise<*>}
+     */
+    async nftCreateCollection(account, description, name, uri, maximum){
+        const payload = {
+            type: "script_function_payload",
+            function: `0x1::Token::create_finite_collection_script`,
+            type_arguments: [],
+            arguments: [
+                Buffer.from(description).toString("hex"),
+                Buffer.from(name).toString("hex"),
+                Buffer.from(uri).toString("hex"),
+                maximum.toString()
+            ]
+        };
+        return await this.submitTransactionHelper(account, payload)
+    }
+
+    /**
+     * Create token in specified collection in quantity defined in supply parameter
+     * @param {Account} account
+     * @param {String} collectionName
+     * @param {String} description
+     * @param {String} name
+     * @param {Number} supply
+     * @param {String} uri
+     * @returns {Promise<*>}
+     */
+    async nftCreateToken(account, collectionName, description, name, supply, uri){
+        const payload = {
+            type: "script_function_payload",
+            function: `0x1::Token::create_token_script`,
+            type_arguments: [],
+            arguments: [
+                Buffer.from(collectionName).toString("hex"),
+                Buffer.from(description).toString("hex"),
+                Buffer.from(name).toString("hex"),
+                supply.toString(),
+                Buffer.from(uri).toString("hex")
+            ]
+        };
+        return await this.submitTransactionHelper(account, payload)
+    }
+
+    /**
+     *
+     * @param {Account} account
+     * @param {String} receiver
+     * @param {String} creator
+     * @param {Number} tokenCreationNum
+     * @param {Number} amount
+     * @returns {Promise<*>}
+     */
+    async nftOfferToken(account, receiver, creator, tokenCreationNum, amount){
+        const payload = {
+            type: "script_function_payload",
+            function: `0x1::TokenTransfers::offer_script`,
+            type_arguments: [],
+            arguments: [
+                receiver,
+                creator,
+                tokenCreationNum.toString(),
+                amount.toString()
+            ]
+        };
+        return await this.submitTransactionHelper(account, payload)
+    }
+
+    /**
+     *
+     * @param {Account} account
+     * @param {String} sender
+     * @param {String} creator
+     * @param {Number} tokenCreationNum
+     * @returns {Promise<*>}
+     */
+    async nftClaimToken(account, sender, creator, tokenCreationNum){
+        const payload = {
+            type: "script_function_payload",
+            function: `0x1::TokenTransfers::claim_script`,
+            type_arguments: [],
+            arguments: [
+                sender,
+                creator,
+                tokenCreationNum.toString(),
+            ]
+        };
+        return await this.submitTransactionHelper(account, payload)
+    }
+
+    /**
+     *
+     * @param {Account} account
+     * @param {String} receiver
+     * @param {String} creator
+     * @param {Number} tokenCreationNum
+     * @returns {Promise<*>}
+     */
+    async nftCancelTokenOffer(account, receiver, creator, tokenCreationNum){
+        const payload = {
+            type: "script_function_payload",
+            function: `0x1::TokenTransfers::cancel_offer_script`,
+            type_arguments: [],
+            arguments: [
+                receiver,
+                creator,
+                tokenCreationNum.toString(),
+            ]
+        };
+        return await this.submitTransactionHelper(account, payload)
+    }
+
+    /**
+     *
+     * @param {String} creator
+     * @param {String} collectionName
+     * @param {String} tokenName
+     * @returns {Promise<number>}
+     */
+    async nftGetTokenId(creator, collectionName, tokenName){
+        const resources = this.getAccountResourcesObject(creator)
+        let collections = []
+        let tokens = []
+
+        if (resources["0x1::Token::Collections"]) {
+            collections = resources["0x1::Token::Collections"]["collections"]["data"]
+        }
+
+        for (let collection in collections) {
+            if (collections[collection]["key"] === collectionName) {
+                tokens = collections[collection]["value"]["tokens"]["data"];
+            }
+        }
+        for (let token in tokens) {
+            if (tokens[token]["key"] === tokenName) {
+                return parseInt(tokens[token]["value"]["id"]["creation_num"]);
+            }
+        }
+        assert(false, "No token IDs for your request!");
     }
 }
