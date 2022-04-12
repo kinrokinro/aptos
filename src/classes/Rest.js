@@ -396,8 +396,8 @@ export class RestClient {
             function: `0x1::TokenTransfers::offer_script`,
             type_arguments: [],
             arguments: [
-                receiver,
-                creator,
+                this.address(receiver),
+                this.address(creator),
                 tokenId.toString(),
                 amount.toString()
             ]
@@ -419,8 +419,8 @@ export class RestClient {
             function: `0x1::TokenTransfers::claim_script`,
             type_arguments: [],
             arguments: [
-                sender,
-                creator,
+                this.address(sender),
+                this.address(creator),
                 tokenId.toString(),
             ]
         };
@@ -441,8 +441,8 @@ export class RestClient {
             function: `0x1::TokenTransfers::cancel_offer_script`,
             type_arguments: [],
             arguments: [
-                receiver,
-                creator,
+                this.address(receiver),
+                this.address(creator),
                 tokenId.toString(),
             ]
         };
