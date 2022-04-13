@@ -253,7 +253,7 @@ export class RestClient {
         }
     }
 
-    async submitTransactionHelper(account, payload, gas){
+    async submitTransactionHelper(account, payload, gas = null){
         const txnRequest = await this.generateTransaction(account.address(), payload, gas || this.gas)
         const signedTxn = await this.signTransaction(account, txnRequest)
         const res = await this.submitTransaction(signedTxn)
@@ -346,7 +346,7 @@ export class RestClient {
      * @param {String} uri
      * @returns {Promise<*>}
      */
-    async createUnlimitedCollection(account, description, name, uri, gas){
+    async createUnlimitedCollection(account, description, name, uri, gas = null){
         const payload = {
             type: "script_function_payload",
             function: `0x1::Token::create_unlimited_collection_script`,
@@ -371,7 +371,7 @@ export class RestClient {
      * @param gas
      * @returns {Promise<*>}
      */
-    async createCollection(account, description, name, uri, maximum, gas){
+    async createCollection(account, description, name, uri, maximum, gas = null){
         const payload = {
             type: "script_function_payload",
             function: `0x1::Token::create_finite_collection_script`,
@@ -397,7 +397,7 @@ export class RestClient {
      * @param {Object} gas
      * @returns {Promise<*>}
      */
-    async createToken(account, collectionName, description, name, supply, uri, gas){
+    async createToken(account, collectionName, description, name, supply, uri, gas = null){
         const payload = {
             type: "script_function_payload",
             function: `0x1::Token::create_token_script`,
@@ -423,7 +423,7 @@ export class RestClient {
      * @param gas
      * @returns {Promise<*>}
      */
-    async offerToken(account, receiver, creator, tokenId, amount, gas){
+    async offerToken(account, receiver, creator, tokenId, amount, gas = null){
         const payload = {
             type: "script_function_payload",
             function: `0x1::TokenTransfers::offer_script`,
@@ -447,7 +447,7 @@ export class RestClient {
      * @param gas
      * @returns {Promise<*>}
      */
-    async claimToken(account, sender, creator, tokenId, gas){
+    async claimToken(account, sender, creator, tokenId, gas = null){
         const payload = {
             type: "script_function_payload",
             function: `0x1::TokenTransfers::claim_script`,
@@ -470,7 +470,7 @@ export class RestClient {
      * @param gas
      * @returns {Promise<*>}
      */
-    async cancelTokenOffer(account, receiver, creator, tokenId, gas){
+    async cancelTokenOffer(account, receiver, creator, tokenId, gas = null){
         const payload = {
             type: "script_function_payload",
             function: `0x1::TokenTransfers::cancel_offer_script`,

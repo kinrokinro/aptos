@@ -13,9 +13,9 @@ const collectionName = "TestCollection"
 const tokenName = "FirstToken"
 
 
+console.log("\n=== Get token ID ===")
 const token_id = await rest.getTokenId(alice.address(), collectionName, tokenName)
 console.log(`Alice's token's identifier: ${token_id}`)
-console.log(`See ${rest.url}/accounts/${alice.address()}/resources`)
 
 console.log("\n=== Transferring the token to Bob ===")
 await rest.offerToken(alice, bob.address(), alice.address(), token_id, 1);
