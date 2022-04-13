@@ -161,5 +161,11 @@ const bob = new Account()
 
 await faucet.fundAddress(alice.address(), 1_000)
 
-await rest.sendCoins(alice, bob.address())
+const result = await rest.sendCoins(alice, bob.address(), 100)
+if (!result) {
+    console.log("Error")
+} else {
+    console.log("Success")
+}
+console.log(rest.getLastTransaction())
 ```
