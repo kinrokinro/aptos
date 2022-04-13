@@ -529,11 +529,15 @@ export class RestClient {
         return collection["tokens"]["data"]
     }
 
-    async getClaimedTokens(creator, collectionName){
-        const collection = await this.getCollection(creator, collectionName)
-        if (collection === false) {
-            return []
+    async getToken(address, collectionName, tokenName){
+        const tokens = await this.getTokens(address, collectionName)
+        if (tokens.length) {
+            for(let t of tokens) {
+                if (t.key === tokenName) {
+                    return t.value
+                }
+            }
         }
-        return collection["claimed_tokens"]["data"]
+        assert(false, `Token ${tokenName} not found in collection ${collectionName}!`);
     }
 }
