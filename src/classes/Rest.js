@@ -12,9 +12,25 @@ export const COINS_RECEIVED = 'received_events'
 
 export class RestClient {
     url = ""
+    gas = {
+        "max_gas_amount": "1000",
+        "gas_unit_price": "1",
+        "gas_currency_code": "XUS",
+    }
 
-    constructor(url = "") {
+    constructor(url = "", gas) {
         this.url = url
+        this.setGasValue(gas)
+    }
+
+    setGasValue(gas){
+        if (gas) {
+            for(let key in gas) {
+                if (this.gas.hasOwnProperty(key)) {
+                    this.gas[key] = gas[key]
+                }
+            }
+        }
     }
 
     async exec(link, query = null, options = {method: "GET"}){
@@ -136,15 +152,15 @@ export class RestClient {
      * @param {Object} gas
      * @returns {Promise<{sequence_number: string, gas_currency_code: string, sender: string, payload: {}, gas_unit_price: string, max_gas_amount: string, expiration_timestamp_secs: string}>}
      */
-    async generateTransaction(sender = "", payload = {}, exp = 600, gas = {max: 1000, unitPrice: 1, currency: "XUS"}){
+    async generateTransaction(sender = "", payload = {}, {gasMax = 1000, gasUnitPrice = 1, gasCurrency = "XUS"} = {}, exp = 600){
         const account = await this.getAccount(sender)
         const seqNum = parseInt(account["sequence_number"])
         return {
             "sender": `${hexAddress(sender)}`,
             "sequence_number": seqNum.toString(),
-            "max_gas_amount": gas.max.toString(),
-            "gas_unit_price": gas.unitPrice.toString(),
-            "gas_currency_code": gas.currency,
+            "max_gas_amount": gasMax.toString(),
+            "gas_unit_price": gasUnitPrice.toString(),
+            "gas_currency_code": gasCurrency,
             "expiration_timestamp_secs": (Math.floor(Date.now() / 1000) + exp).toString(), // Unix timestamp, in seconds + 10 minutes ???
             "payload": payload,
         }
@@ -228,8 +244,8 @@ export class RestClient {
         }
     }
 
-    async submitTransactionHelper(account, payload){
-        const txnRequest = await this.generateTransaction(account.address(), payload)
+    async submitTransactionHelper(account, payload, gas){
+        const txnRequest = await this.generateTransaction(account.address(), payload, gas || this.gas)
         const signedTxn = await this.signTransaction(account, txnRequest)
         const res = await this.submitTransaction(signedTxn)
         await this.waitForTransaction(res["hash"])
@@ -243,9 +259,10 @@ export class RestClient {
      * @param {Account || String} recipient
      * @param {Number} amount
      * @param {String} coin
+     * @param gas
      * @returns {Promise<string>}
      */
-    async sendCoins(accountFrom, recipient, amount = 0, coin = 'TestCoin'){
+    async sendCoins(accountFrom, recipient, amount = 0, coin = 'TestCoin', gas){
         const payload = {
             type: "script_function_payload",
             function: `0x1::${coin}::transfer`,
@@ -253,18 +270,20 @@ export class RestClient {
             arguments: [
                 this.address(recipient),
                 amount.toString(),
+                (Math.floor(Date.now() / 1000)).toString()
             ]
         };
-        return await this.submitTransactionHelper(accountFrom, payload)
+        return await this.submitTransactionHelper(accountFrom, payload, gas)
     }
 
     /**
      * Create a new account in blockchain
      * @param {Account} accountFrom
      * @param {Account} accountNew
+     * @param gas
      * @returns {Promise<string>}
      */
-    async createAccount(accountFrom, accountNew){
+    async createAccount(accountFrom, accountNew, gas){
         const payload = {
             "type": "script_function_payload",
             "function": "0x1::AptosAccount::create_account",
@@ -274,23 +293,24 @@ export class RestClient {
                 hexAddress(accountNew.pubKey()), // ???
             ]
         }
-        return await this.submitTransactionHelper(accountFrom, payload)
+        return await this.submitTransactionHelper(accountFrom, payload, gas)
     }
 
     /**
      * Publish a new module to the blockchain within the specified account
      * @param accountFrom
      * @param moduleHex
+     * @param gas
      * @returns {Promise<string>}
      */
-    async publishModule(accountFrom, moduleHex = ""){
+    async publishModule(accountFrom, moduleHex = "", gas){
         const payload = {
             "type": "module_bundle_payload",
             "modules": [
                 {"bytecode": `${hexAddress(moduleHex)}`},
             ],
         }
-        return await this.submitTransactionHelper(accountFrom, payload)
+        return await this.submitTransactionHelper(accountFrom, payload, gas)
     }
 
     address(a){
@@ -313,10 +333,11 @@ export class RestClient {
      * @param {String} description
      * @param {String} name
      * @param {String} uri
+     * @param gas
      * @param {String} uri
      * @returns {Promise<*>}
      */
-    async createUnlimitedCollection(account, description, name, uri){
+    async createUnlimitedCollection(account, description, name, uri, gas){
         const payload = {
             type: "script_function_payload",
             function: `0x1::Token::create_unlimited_collection_script`,
@@ -327,7 +348,7 @@ export class RestClient {
                 Buffer.from(uri).toString("hex"),
             ]
         };
-        return await this.submitTransactionHelper(account, payload)
+        return await this.submitTransactionHelper(account, payload, gas)
     }
 
     /**
@@ -338,9 +359,10 @@ export class RestClient {
      * @param {String} uri
      * @param {String} uri
      * @param {Integer} maximum
+     * @param gas
      * @returns {Promise<*>}
      */
-    async createCollection(account, description, name, uri, maximum){
+    async createCollection(account, description, name, uri, maximum, gas){
         const payload = {
             type: "script_function_payload",
             function: `0x1::Token::create_finite_collection_script`,
@@ -352,7 +374,7 @@ export class RestClient {
                 maximum.toString()
             ]
         };
-        return await this.submitTransactionHelper(account, payload)
+        return await this.submitTransactionHelper(account, payload, gas)
     }
 
     /**
@@ -363,9 +385,10 @@ export class RestClient {
      * @param {String} name
      * @param {Number} supply
      * @param {String} uri
+     * @param {Object} gas
      * @returns {Promise<*>}
      */
-    async createToken(account, collectionName, description, name, supply, uri){
+    async createToken(account, collectionName, description, name, supply, uri, gas){
         const payload = {
             type: "script_function_payload",
             function: `0x1::Token::create_token_script`,
@@ -378,7 +401,7 @@ export class RestClient {
                 Buffer.from(uri).toString("hex")
             ]
         };
-        return await this.submitTransactionHelper(account, payload)
+        return await this.submitTransactionHelper(account, payload, gas)
     }
 
     /**
@@ -388,9 +411,10 @@ export class RestClient {
      * @param {String} creator
      * @param {Number} tokenId
      * @param {Number} amount
+     * @param gas
      * @returns {Promise<*>}
      */
-    async offerToken(account, receiver, creator, tokenId, amount){
+    async offerToken(account, receiver, creator, tokenId, amount, gas){
         const payload = {
             type: "script_function_payload",
             function: `0x1::TokenTransfers::offer_script`,
@@ -402,7 +426,7 @@ export class RestClient {
                 amount.toString()
             ]
         };
-        return await this.submitTransactionHelper(account, payload)
+        return await this.submitTransactionHelper(account, payload, gas)
     }
 
     /**
@@ -411,9 +435,10 @@ export class RestClient {
      * @param {String} sender
      * @param {String} creator
      * @param {Number} tokenId
+     * @param gas
      * @returns {Promise<*>}
      */
-    async claimToken(account, sender, creator, tokenId){
+    async claimToken(account, sender, creator, tokenId, gas){
         const payload = {
             type: "script_function_payload",
             function: `0x1::TokenTransfers::claim_script`,
@@ -424,7 +449,7 @@ export class RestClient {
                 tokenId.toString(),
             ]
         };
-        return await this.submitTransactionHelper(account, payload)
+        return await this.submitTransactionHelper(account, payload, gas)
     }
 
     /**
@@ -433,9 +458,10 @@ export class RestClient {
      * @param {String} receiver
      * @param {String} creator
      * @param {Number} tokenId
+     * @param gas
      * @returns {Promise<*>}
      */
-    async cancelTokenOffer(account, receiver, creator, tokenId){
+    async cancelTokenOffer(account, receiver, creator, tokenId, gas){
         const payload = {
             type: "script_function_payload",
             function: `0x1::TokenTransfers::cancel_offer_script`,
@@ -446,7 +472,7 @@ export class RestClient {
                 tokenId.toString(),
             ]
         };
-        return await this.submitTransactionHelper(account, payload)
+        return await this.submitTransactionHelper(account, payload, gas)
     }
 
     /**
@@ -457,14 +483,13 @@ export class RestClient {
      * @returns {Promise<number>}
      */
     async getTokenId(creator, collectionName, tokenName){
-        const tokens = await this.getTokens(creator, collectionName)
+        const tokens = (await this.getTokens(creator, collectionName))["data"]
 
         if (tokens.length) {
-            for (let token of tokens.data) {
-                // ???
-                // if (tokens[token]["key"] === tokenName) {
-                //     return parseInt(tokens[token]["value"]["id"]["creation_num"]);
-                // }
+            for (let token of tokens) {
+                if (token["key"] === tokenName) {
+                    return parseInt(token["value"]["id"]["creation_num"]);
+                }
             }
         }
 

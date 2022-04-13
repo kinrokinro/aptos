@@ -10,19 +10,33 @@ console.log("Alice address: ", alice.address())
 console.log("Bob address: ", bob.address())
 
 const collectionName = "TestCollection"
+const collectionDesc = "Alice's simple collection"
 const tokenName = "FirstToken"
+const tokenDesc = "Alice's simple token"
 
 console.log("\n=== Creating Collection and Token ===")
-await rest.createUnlimitedCollection(alice, "Alice's simple collection", collectionName, "https://pimenov.com.ua")
-await rest.createToken(alice, collectionName, "Alice's simple token", tokenName, 1, "https://aptos.dev/img/nyan.jpeg")
+// await rest.createUnlimitedCollection(alice, collectionDesc, collectionName, "https://pimenov.com.ua")
+const txHash = await rest.createToken(
+    alice,
+    collectionName,
+    tokenDesc,
+    tokenName,
+    1,
+    "https://aptos.dev/img/nyan.jpeg",
+    {
+        gasMax: 2000
+    }
+)
 console.log(`See ${rest.url}/accounts/${alice.address()}/resources`)
+console.log(`See ${rest.url}/transactions/${txHash}`)
 
-const token_id = await rest.getTokenId(alice.address(), collectionName, tokenName)
-console.log(`Alice's token's identifier: ${token_id}`)
-console.log(`See ${rest.url}/accounts/${alice.address()}/resources`)
 
-console.log("\n=== Transferring the token to Bob ===")
-await rest.offerToken(alice, bob.address(), alice.address(), token_id, 1);
-await rest.claimToken(bob, alice.address(), alice.address(), token_id);
-
-console.log(`See ${rest.url}/accounts/${bob.address()}/resources`);
+// const token_id = await rest.getTokenId(alice.address(), collectionName, tokenName)
+// console.log(`Alice's token's identifier: ${token_id}`)
+// console.log(`See ${rest.url}/accounts/${alice.address()}/resources`)
+//
+// console.log("\n=== Transferring the token to Bob ===")
+// await rest.offerToken(alice, bob.address(), alice.address(), token_id, 1);
+// await rest.claimToken(bob, alice.address(), alice.address(), token_id);
+//
+// console.log(`See ${rest.url}/accounts/${bob.address()}/resources`);
