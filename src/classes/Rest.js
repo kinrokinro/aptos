@@ -281,7 +281,7 @@ export class RestClient {
      * @param {Number} amount
      * @param {String} coin
      * @param gas
-     * @returns {Promise<string>}
+     * @returns {Promise<boolean>}
      */
     async sendCoins(accountFrom, recipient, amount = 0, coin = 'TestCoin', gas){
         const payload = {
@@ -303,7 +303,7 @@ export class RestClient {
      * @param {Account} accountFrom
      * @param {Account} accountNew
      * @param gas
-     * @returns {Promise<string>}
+     * @returns {Promise<boolean>}
      */
     async createAccount(accountFrom, accountNew, gas){
         const payload = {
@@ -324,7 +324,7 @@ export class RestClient {
      * @param accountFrom
      * @param moduleHex
      * @param gas
-     * @returns {Promise<string>}
+     * @returns {Promise<boolean>}
      */
     async publishModule(accountFrom, moduleHex = "", gas){
         const payload = {
@@ -359,7 +359,7 @@ export class RestClient {
      * @param {String} uri
      * @param gas
      * @param {String} uri
-     * @returns {Promise<*>}
+     * @returns {Promise<boolean>}
      */
     async createUnlimitedCollection(account, description, name, uri, gas = null){
         const payload = {
@@ -385,7 +385,7 @@ export class RestClient {
      * @param {String} uri
      * @param {Integer} maximum
      * @param gas
-     * @returns {Promise<*>}
+     * @returns {Promise<boolean>}
      */
     async createCollection(account, description, name, uri, maximum, gas = null){
         const payload = {
@@ -412,7 +412,7 @@ export class RestClient {
      * @param {Number} supply
      * @param {String} uri
      * @param {Object} gas
-     * @returns {Promise<*>}
+     * @returns {Promise<boolean>}
      */
     async createToken(account, collectionName, description, name, supply, uri, gas = null){
         const payload = {
@@ -439,7 +439,7 @@ export class RestClient {
      * @param {Number} tokenId
      * @param {Number} amount
      * @param gas
-     * @returns {Promise<*>}
+     * @returns {Promise<boolean>}
      */
     async offerToken(account, receiver, creator, tokenId, amount, gas = null){
         const payload = {
@@ -464,7 +464,7 @@ export class RestClient {
      * @param {String} creator
      * @param {Number} tokenId
      * @param gas
-     * @returns {Promise<*>}
+     * @returns {Promise<boolean>}
      */
     async claimToken(account, sender, creator, tokenId, gas = null){
         const payload = {
@@ -488,7 +488,7 @@ export class RestClient {
      * @param {String} creator
      * @param {Number} tokenId
      * @param gas
-     * @returns {Promise<*>}
+     * @returns {Promise<boolean>}
      */
     async cancelTokenOffer(account, receiver, creator, tokenId, gas = null){
         const payload = {
