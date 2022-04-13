@@ -290,8 +290,7 @@ export class RestClient {
             type_arguments: [],
             arguments: [
                 this._0x(recipient),
-                amount.toString(),
-                (Math.floor(Date.now() / 1000)).toString()
+                amount.toString()
             ]
         };
         await this.submitTransactionHelper(accountFrom, payload, gas)

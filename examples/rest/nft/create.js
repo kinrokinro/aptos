@@ -16,7 +16,7 @@ const tokenDesc = "Alice's simple token"
 
 console.log("\n=== Creating Collection and Token ===")
 // await rest.createUnlimitedCollection(alice, collectionDesc, collectionName, "https://pimenov.com.ua")
-const txHash = await rest.createToken(
+const result = await rest.createToken(
     alice,
     collectionName,
     tokenDesc,
@@ -28,7 +28,7 @@ const txHash = await rest.createToken(
     }
 )
 console.log(`See ${rest.url}/accounts/${alice.address()}/resources`)
-console.log(`See ${rest.url}/transactions/${txHash}`)
+console.log(`See ${rest.url}/transactions/${rest.getLastTransaction().hash}`)
 
 
 // const token_id = await rest.getTokenId(alice.address(), collectionName, tokenName)
