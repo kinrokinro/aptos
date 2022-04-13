@@ -485,7 +485,7 @@ export class RestClient {
     }
 
     /**
-     *
+     * Get token ID, return token ID or -1
      * @param {String} creator
      * @param {String} collectionName
      * @param {String} tokenName
@@ -497,12 +497,12 @@ export class RestClient {
         if (tokens.length) {
             for (let token of tokens) {
                 if (token["key"] === tokenName) {
-                    return parseInt(token["value"]["id"]["creation_num"]);
+                    return parseInt(token["value"]["id"]["creation_num"])
                 }
             }
         }
 
-        assert(false, "No token IDs for your request!");
+        return -1
     }
 
     /**
@@ -524,13 +524,14 @@ export class RestClient {
     }
 
     /**
-     * Get collection by name, return collection or false
+     * Get collection by name, return collection array or null
      * @param creator
      * @param collectionName
-     * @returns {Promise<boolean|*>}
+     * @returns {Promise<[]|*>}
      */
     async getCollection(creator, collectionName){
-        return await this.collectionExists(creator, collectionName)
+        const collection = await this.collectionExists(creator, collectionName)
+        return collection === false ? null : collection
     }
 
     /**
