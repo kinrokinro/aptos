@@ -11,7 +11,7 @@ console.log("Bob address: ", bob.address())
 
 const collectionName = "TestCollection"
 const collectionDesc = "Alice's simple collection"
-const tokenName = "FirstToken"
+const tokenName = "SecondToken"
 const tokenDesc = "Alice's simple token"
 
 console.log("\n=== Creating Collection and Token ===")
@@ -24,7 +24,7 @@ const txHash = await rest.createToken(
     1,
     "https://aptos.dev/img/nyan.jpeg",
     {
-        gas_currency_code: 2000
+        max_gas_amount: 2000
     }
 )
 console.log(`See ${rest.url}/accounts/${alice.address()}/resources`)

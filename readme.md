@@ -135,6 +135,7 @@ NFT:
 + `getTokens()`
 + `getToken()`
 + `getGallery()`
++ `availableTokens()`
 
 Methods to work with transactions
 + `generateTransaction()`

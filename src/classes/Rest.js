@@ -166,9 +166,9 @@ export class RestClient {
         const seqNum = parseInt(account["sequence_number"])
         return {
             "sender": `${hexAddress(sender)}`,
-            "sequence_number": seqNum.toString(),
-            "max_gas_amount": max_gas_amount.toString(),
-            "gas_unit_price": gas_unit_price.toString(),
+            "sequence_number": ""+seqNum,
+            "max_gas_amount": ""+max_gas_amount,
+            "gas_unit_price": ""+gas_unit_price,
             "gas_currency_code": gas_currency_code,
             "expiration_timestamp_secs": (Math.floor(Date.now() / 1000) + exp).toString(), // Unix timestamp, in seconds + 10 minutes ???
             "payload": payload,
@@ -582,4 +582,7 @@ export class RestClient {
         return resource["gallery"]["data"]
     }
 
+    async availableTokens(address){
+        return await this.getGallery(address)
+    }
 }
