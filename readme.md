@@ -109,6 +109,9 @@ The next methods provide work with Aptos account:
 + `getAccountTransactionsLast()`
 
 General purpose methods:
++ `setGasValue()`
++ `getHealthy()`
++ `getLedger()`
 + `getEvents()`
 + `getTransactions()`
 + `createAccount()`
