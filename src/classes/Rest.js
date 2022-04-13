@@ -23,11 +23,20 @@ export class RestClient {
         this.setGasValue(gas)
     }
 
+    /**
+     * Set gas values
+     * @param gas
+     * gas = {
+     *     "max_gas_amount",
+     *     "gas_unit_price",
+     *     "gas_currency_code",
+     * }
+     */
     setGasValue(gas){
         if (gas) {
             for(let key in gas) {
                 if (this.gas.hasOwnProperty(key)) {
-                    this.gas[key] = gas[key]
+                    this.gas[key] = ""+gas[key]
                 }
             }
         }
@@ -152,15 +161,15 @@ export class RestClient {
      * @param {Object} gas
      * @returns {Promise<{sequence_number: string, gas_currency_code: string, sender: string, payload: {}, gas_unit_price: string, max_gas_amount: string, expiration_timestamp_secs: string}>}
      */
-    async generateTransaction(sender = "", payload = {}, {gasMax = 1000, gasUnitPrice = 1, gasCurrency = "XUS"} = {}, exp = 600){
+    async generateTransaction(sender = "", payload = {}, {max_gas_amount = 1000, gas_unit_price = 1, gas_currency_code = "XUS"} = {}, exp = 600){
         const account = await this.getAccount(sender)
         const seqNum = parseInt(account["sequence_number"])
         return {
             "sender": `${hexAddress(sender)}`,
             "sequence_number": seqNum.toString(),
-            "max_gas_amount": gasMax.toString(),
-            "gas_unit_price": gasUnitPrice.toString(),
-            "gas_currency_code": gasCurrency,
+            "max_gas_amount": max_gas_amount.toString(),
+            "gas_unit_price": gas_unit_price.toString(),
+            "gas_currency_code": gas_currency_code,
             "expiration_timestamp_secs": (Math.floor(Date.now() / 1000) + exp).toString(), // Unix timestamp, in seconds + 10 minutes ???
             "payload": payload,
         }

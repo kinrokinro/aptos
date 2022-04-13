@@ -24,7 +24,7 @@ const txHash = await rest.createToken(
     1,
     "https://aptos.dev/img/nyan.jpeg",
     {
-        gasMax: 2000
+        gas_currency_code: 2000
     }
 )
 console.log(`See ${rest.url}/accounts/${alice.address()}/resources`)
