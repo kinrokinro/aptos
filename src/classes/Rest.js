@@ -566,6 +566,11 @@ export class RestClient {
         return false
     }
 
+    /**
+     * Get Gallery, return array of elements
+     * @param address
+     * @returns {Promise<*[]|*>}
+     */
     async getGallery(address){
         const resource = await this.getAccountResource(address, `0x1::Token::Gallery`)
 
