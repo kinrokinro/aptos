@@ -492,7 +492,7 @@ export class RestClient {
      * @returns {Promise<number>}
      */
     async getTokenId(creator, collectionName, tokenName){
-        const tokens = (await this.getTokens(creator, collectionName))["data"]
+        const tokens = await this.getTokens(creator, collectionName)
 
         if (tokens.length) {
             for (let token of tokens) {
@@ -505,6 +505,12 @@ export class RestClient {
         assert(false, "No token IDs for your request!");
     }
 
+    /**
+     * Check if collection exists and return it if found, otherwise return false
+     * @param creator
+     * @param collectionName
+     * @returns {Promise<boolean|*>}
+     */
     async collectionExists(creator, collectionName){
         const resource = await this.getAccountResource(creator, "0x1::Token::Collections")
         if (resource) {
@@ -517,10 +523,22 @@ export class RestClient {
         return false
     }
 
+    /**
+     * Get collection by name, return collection or false
+     * @param creator
+     * @param collectionName
+     * @returns {Promise<boolean|*>}
+     */
     async getCollection(creator, collectionName){
         return await this.collectionExists(creator, collectionName)
     }
 
+    /**
+     * Get tokens from collection
+     * @param creator
+     * @param collectionName
+     * @returns {Promise<*[]|*>}
+     */
     async getTokens(creator, collectionName){
         const collection = await this.getCollection(creator, collectionName)
         if (collection === false) {
@@ -529,6 +547,13 @@ export class RestClient {
         return collection["tokens"]["data"]
     }
 
+    /**
+     * Get token from collection, return token or false
+     * @param address
+     * @param collectionName
+     * @param tokenName
+     * @returns {Promise<boolean|*>}
+     */
     async getToken(address, collectionName, tokenName){
         const tokens = await this.getTokens(address, collectionName)
         if (tokens.length) {
@@ -538,6 +563,6 @@ export class RestClient {
                 }
             }
         }
-        assert(false, `Token ${tokenName} not found in collection ${collectionName}!`);
+        return false
     }
 }
