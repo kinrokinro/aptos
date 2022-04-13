@@ -144,6 +144,7 @@ Methods to work with transactions
 + `transactionPending()`
 + `waitForTransaction()`
 + `submitTransactionHelper()`
++ `getLastTransaction()`
 
 ### Using
 1. Sending coins from one account to other
