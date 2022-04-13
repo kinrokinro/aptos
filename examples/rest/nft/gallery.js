@@ -9,17 +9,9 @@ console.log("=== Account ===")
 console.log("Alice address: ", alice.address())
 console.log("Bob address: ", bob.address())
 
-const collectionName = "TestCollection"
-const tokenName = "FirstToken"
+console.log("\n=== Get Gallery Alice ===")
+console.log( await rest.getGallery(alice.address()) )
 
+console.log("\n=== Get Gallery Bob ===")
+console.log( await rest.getGallery(bob.address()) )
 
-console.log("\n=== Get token ID ===")
-const token_id = await rest.getTokenId(alice.address(), collectionName, tokenName)
-console.log(`Alice's token's identifier: ${token_id}`)
-
-console.log("\n=== Transferring the token to Bob ===")
-await rest.offerToken(alice, bob.address(), alice.address(), token_id, 1);
-await rest.claimToken(bob, alice.address(), alice.address(), token_id);
-
-console.log(`See Alice ${rest.url}/accounts/${alice.address()}/resources`);
-console.log(`See Bob ${rest.url}/accounts/${bob.address()}/resources`);

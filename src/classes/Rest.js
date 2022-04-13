@@ -565,4 +565,15 @@ export class RestClient {
         }
         return false
     }
+
+    async getGallery(address){
+        const resource = await this.getAccountResource(address, `0x1::Token::Gallery`)
+
+        if (!resource) {
+            return []
+        }
+
+        return resource["gallery"]["data"]
+    }
+
 }
