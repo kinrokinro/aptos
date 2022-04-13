@@ -127,6 +127,11 @@ NFT:
 + `claimToken()`
 + `cancelTokenOffer()`
 + `getTokenId()`
++ `collectionExists()`
++ `getCollection()`
++ `getTokens()`
++ `getToken()`
++ `getGallery()`
 
 Methods to work with transactions
 + `generateTransaction()`
