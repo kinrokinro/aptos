@@ -17,6 +17,7 @@ export class RestClient {
         "gas_unit_price": "1",
         "gas_currency_code": "XUS",
     }
+    lastTransaction = null
 
     constructor(url = "", gas) {
         this.url = url
@@ -70,16 +71,16 @@ export class RestClient {
     }
 
     async getAccount(addr){
-        return await this.exec(`accounts/${this.address(addr)}`)
+        return await this.exec(`accounts/${this._0x(addr)}`)
     }
 
     async getAccountResources(addr, query = {version: null}){
-        return await this.exec(`accounts/${this.address(addr)}/resources`, query)
+        return await this.exec(`accounts/${this._0x(addr)}/resources`, query)
     }
 
     async getAccountResourcesObject(addr, query = {version: null}){
         const result = {}
-        const resources = await this.exec(`accounts/${this.address(addr)}/resources`, query)
+        const resources = await this.exec(`accounts/${this._0x(addr)}/resources`, query)
         for(let r of resources) {
             result[r.type] = r.data
         }
@@ -87,7 +88,7 @@ export class RestClient {
     }
 
     async getAccountResource(addr, res = null, query = {version: null}){
-        const resources = await this.getAccountResourcesObject(this.address(addr), query)
+        const resources = await this.getAccountResourcesObject(this._0x(addr), query)
         return res !== null && resources[res] ? resources[res] : null
     }
 
@@ -97,11 +98,11 @@ export class RestClient {
     }
 
     async getAccountModules(addr, query = {version: null}){
-        return await this.exec(`accounts/${this.address(addr)}/modules`, query)
+        return await this.exec(`accounts/${this._0x(addr)}/modules`, query)
     }
 
     async getAccountEvents(addr, eventStruct, fieldName, query){
-        return await this.exec(`accounts/${this.address(addr)}/events/${eventStruct}/${fieldName}`, query)
+        return await this.exec(`accounts/${this._0x(addr)}/events/${eventStruct}/${fieldName}`, query)
     }
 
     async getAccountEventsCoins(address, type = COINS_SENT, coin = "TestCoin", query = {limit: 25, start: 0}){
@@ -133,7 +134,7 @@ export class RestClient {
     }
 
     async getAccountTransactions(addr, query = {limit: 25, start: 0}){
-        return await this.exec(`accounts/${this.address(addr)}/transactions`, query)
+        return await this.exec(`accounts/${this._0x(addr)}/transactions`, query)
     }
 
     async getAccountTransactionsLast(addr, limit = 25, coin = 'TestCoin'){
@@ -150,6 +151,10 @@ export class RestClient {
 
     async getTransactions(query = {limit: 25, start: 0}){
         return await this.exec(`transactions`)
+    }
+
+    async getTransaction(hash, query = {limit: 25, start: 0}){
+        return await this.exec(`transactions/${hash}`)
     }
 
     /**
@@ -258,8 +263,15 @@ export class RestClient {
         const signedTxn = await this.signTransaction(account, txnRequest)
         const res = await this.submitTransaction(signedTxn)
         await this.waitForTransaction(res["hash"])
+        this.lastTransaction = await this.getTransaction(res["hash"])
         return res["hash"].toString()
     }
+
+    getLastTransaction(){
+        return this.lastTransaction
+    }
+
+    /* =============================== Coins =====================================*/
 
     /**
      * Transfer a given coin amount from a given Account to the recipient's account address.
@@ -277,12 +289,13 @@ export class RestClient {
             function: `0x1::${coin}::transfer`,
             type_arguments: [],
             arguments: [
-                this.address(recipient),
+                this._0x(recipient),
                 amount.toString(),
                 (Math.floor(Date.now() / 1000)).toString()
             ]
         };
-        return await this.submitTransactionHelper(accountFrom, payload, gas)
+        await this.submitTransactionHelper(accountFrom, payload, gas)
+        return this.lastTransaction.success
     }
 
     /**
@@ -302,7 +315,8 @@ export class RestClient {
                 hexAddress(accountNew.pubKey()), // ???
             ]
         }
-        return await this.submitTransactionHelper(accountFrom, payload, gas)
+        await this.submitTransactionHelper(accountFrom, payload, gas)
+        return this.lastTransaction.success
     }
 
     /**
@@ -319,10 +333,11 @@ export class RestClient {
                 {"bytecode": `${hexAddress(moduleHex)}`},
             ],
         }
-        return await this.submitTransactionHelper(accountFrom, payload, gas)
+        await this.submitTransactionHelper(accountFrom, payload, gas)
+        return this.lastTransaction.success
     }
 
-    address(a){
+    _0x(a){
         if (a instanceof Account) {
             return a.address()
         } else if (typeof a === "string") {
@@ -356,8 +371,9 @@ export class RestClient {
                 Buffer.from(name).toString("hex"),
                 Buffer.from(uri).toString("hex"),
             ]
-        };
-        return await this.submitTransactionHelper(account, payload, gas)
+        }
+        await this.submitTransactionHelper(account, payload, gas)
+        return this.lastTransaction.success
     }
 
     /**
@@ -382,8 +398,9 @@ export class RestClient {
                 Buffer.from(uri).toString("hex"),
                 maximum.toString()
             ]
-        };
-        return await this.submitTransactionHelper(account, payload, gas)
+        }
+        await this.submitTransactionHelper(account, payload, gas)
+        return this.lastTransaction.success
     }
 
     /**
@@ -409,8 +426,9 @@ export class RestClient {
                 supply.toString(),
                 Buffer.from(uri).toString("hex")
             ]
-        };
-        return await this.submitTransactionHelper(account, payload, gas)
+        }
+        await this.submitTransactionHelper(account, payload, gas)
+        return this.lastTransaction.success
     }
 
     /**
@@ -429,13 +447,14 @@ export class RestClient {
             function: `0x1::TokenTransfers::offer_script`,
             type_arguments: [],
             arguments: [
-                this.address(receiver),
-                this.address(creator),
+                this._0x(receiver),
+                this._0x(creator),
                 tokenId.toString(),
                 amount.toString()
             ]
-        };
-        return await this.submitTransactionHelper(account, payload, gas)
+        }
+        await this.submitTransactionHelper(account, payload, gas)
+        return this.lastTransaction.success
     }
 
     /**
@@ -453,12 +472,13 @@ export class RestClient {
             function: `0x1::TokenTransfers::claim_script`,
             type_arguments: [],
             arguments: [
-                this.address(sender),
-                this.address(creator),
+                this._0x(sender),
+                this._0x(creator),
                 tokenId.toString(),
             ]
-        };
-        return await this.submitTransactionHelper(account, payload, gas)
+        }
+        await this.submitTransactionHelper(account, payload, gas)
+        return this.lastTransaction.success
     }
 
     /**
@@ -476,12 +496,13 @@ export class RestClient {
             function: `0x1::TokenTransfers::cancel_offer_script`,
             type_arguments: [],
             arguments: [
-                this.address(receiver),
-                this.address(creator),
+                this._0x(receiver),
+                this._0x(creator),
                 tokenId.toString(),
             ]
-        };
-        return await this.submitTransactionHelper(account, payload, gas)
+        }
+        await this.submitTransactionHelper(account, payload, gas)
+        return this.lastTransaction.success
     }
 
     /**
@@ -582,7 +603,22 @@ export class RestClient {
         return resource["gallery"]["data"]
     }
 
+    /**
+     * Get available tokens, this is synonym to getGallery()
+     * @param address
+     * @returns {Promise<*[]|*>}
+     */
     async availableTokens(address){
         return await this.getGallery(address)
+    }
+
+    /**
+     * Get tokens who offered and wait claim
+     * @param address
+     * @returns {Promise<*|null>}
+     */
+    async getPendingClaims(address){
+        const resource = await this.getAccountResource(address, `0x1::TokenTransfers::TokenTransfers`)
+        return resource ? resource["pending_claims"]["data"] : null
     }
 }

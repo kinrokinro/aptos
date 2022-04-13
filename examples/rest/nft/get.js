@@ -27,3 +27,11 @@ console.log(JSON.stringify(token, null, 4))
 console.log("\n=== Get Token ID ===")
 const tokenId = await rest.getTokenId(alice.address(), collectionName, tokenName)
 console.log(JSON.stringify(tokenId, null, 4))
+
+console.log("\n=== Available Tokens ===")
+const available = await rest.availableTokens(alice.address())
+console.log(JSON.stringify(available, null, 4))
+
+console.log("\n=== Pending Claimed Tokens ===")
+const pending = await rest.getPendingClaims(alice.address())
+console.log(JSON.stringify(pending, null, 4))
