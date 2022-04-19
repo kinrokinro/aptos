@@ -526,15 +526,30 @@ export class RestClient {
     }
 
     /**
+     * Get collections
+     * @param creator
+     * @returns {Promise<*[]|*>}
+     */
+    async getCollections(creator){
+        const resource = await this.getAccountResource(creator, "0x1::Token::Collections")
+
+        if (!resource) {
+            return []
+        }
+
+        return resource["collections"]["data"]
+    }
+
+    /**
      * Check if collection exists and return it if found, otherwise return false
      * @param creator
      * @param collectionName
      * @returns {Promise<boolean|*>}
      */
     async collectionExists(creator, collectionName){
-        const resource = await this.getAccountResource(creator, "0x1::Token::Collections")
+        const resource = await this.getCollections(creator)
         if (resource) {
-            for(let c of resource["collections"]["data"]){
+            for(let c of resource){
                 if (c.key === collectionName) {
                     return c.value
                 }
