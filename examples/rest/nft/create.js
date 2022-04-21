@@ -9,10 +9,10 @@ console.log("=== Account ===")
 console.log("Alice address: ", alice.address())
 console.log("Bob address: ", bob.address())
 
-const collectionName = "TestCollection"
+const collectionName = "Third Collection"
 const collectionDesc = "Alice's simple collection"
-const tokenName = "SecondToken"
-const tokenDesc = "Alice's simple token"
+const tokenName = "First Token"
+const tokenDesc = "Create token example"
 
 console.log("\n=== Creating Collection and Token ===")
 // await rest.createUnlimitedCollection(alice, collectionDesc, collectionName, "https://pimenov.com.ua")

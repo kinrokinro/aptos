@@ -584,6 +584,23 @@ export class RestClient {
     }
 
     /**
+     * Get All Tokens
+     * @param creator
+     * @returns {Promise<{}>}
+     */
+    async getTokensAll(creator){
+        const collections = await this.getCollections(creator)
+        let result = {}
+        if (collections === false) {
+            return result
+        }
+        for(let c of collections) {
+            result[c.key] = await this.getTokens(creator, c.key)
+        }
+        return result
+    }
+
+    /**
      * Get token from collection, return token or false
      * @param address
      * @param collectionName
