@@ -88,8 +88,8 @@ export class RestClient {
     }
 
     async getAccountResource(addr, res = null, query = {version: null}){
-        const resources = await this.getAccountResourcesObject(this._0x(addr), query)
-        return res !== null && resources[res] ? resources[res] : null
+        const resource = await this.exec(`accounts/${this._0x(addr)}/resource/${res}`, query)
+        return res !== null && resource.data ? resource.data : null
     }
 
     async getAccountBalance(add, coin = 'TestCoin', query = {version: null}){
@@ -99,6 +99,10 @@ export class RestClient {
 
     async getAccountModules(addr, query = {version: null}){
         return await this.exec(`accounts/${this._0x(addr)}/modules`, query)
+    }
+
+    async getAccountModule(addr, module, query = {version: null}){
+        return await this.exec(`accounts/${this._0x(addr)}/module/${module}`, query)
     }
 
     async getAccountEvents(addr, eventStruct, fieldName, query){
