@@ -88,8 +88,12 @@ export class RestClient {
     }
 
     async getAccountResource(addr, res = null, query = {version: null}){
-        const resource = await this.exec(`accounts/${this._0x(addr)}/resource/${res}`, query)
-        return res !== null && resource.data ? resource.data : null
+        try {
+            const resource = await this.exec(`accounts/${this._0x(addr)}/resource/${res}`, query)
+            return res !== null && resource.data ? resource.data : null
+        } catch (e) {
+            return null
+        }
     }
 
     async getAccountBalance(add, coin = 'TestCoin', query = {version: null}){
