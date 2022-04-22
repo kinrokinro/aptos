@@ -133,7 +133,9 @@ NFT:
 + `collectionExists()`
 + `getCollection()`
 + `getTokens()`
++ `getTokensAll()`
 + `getToken()`
++ `getTokenById()`
 + `getGallery()`
 + `availableTokens()`
 
