@@ -541,6 +541,7 @@ export class RestClient {
             if (!all[c].length) continue
             for(let t of all[c]) {
                 if (parseInt(t.value.id.creation_num) === +id) {
+                    t.collection = c
                     return t
                 }
             }
