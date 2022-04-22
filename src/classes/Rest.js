@@ -530,6 +530,25 @@ export class RestClient {
     }
 
     /**
+     * Get token by token ID
+     * @param {String} creator
+     * @param {Integer} id
+     * @returns {Promise<null|{}>}
+     */
+    async getTokenById(creator, id){
+        const all = this.getTokensAll(creator)
+        for(let c in all) {
+            if (!all[c].length) continue
+            for(let t of all[c]) {
+                if (t.id.creation_num === id) {
+                    return t
+                }
+            }
+        }
+        return null
+    }
+
+    /**
      * Get collections
      * @param creator
      * @returns {Promise<*[]|*>}
