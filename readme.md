@@ -130,6 +130,7 @@ NFT:
 + `createToken()`
 + `offerToken()`
 + `claimToken()`
++ `dealToken()`
 + `cancelTokenOffer()`
 + `getTokenId()`
 + `collectionExists()`

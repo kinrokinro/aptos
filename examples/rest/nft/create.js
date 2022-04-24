@@ -1,5 +1,6 @@
 import {Account, RestClient} from "../../../src/index.js";
 import {REST_URL} from "../../helpers/consts.js";
+import {logObject} from "../../helpers/log.js";
 
 const rest = new RestClient(REST_URL)
 const alice = Account.fromMnemonic("area field scatter industry apology control friend sail admit mask sell spread increase prepare virtual pulse pact hobby olympic uphold anger solid kick ship")
@@ -9,34 +10,36 @@ console.log("=== Account ===")
 console.log("Alice address: ", alice.address())
 console.log("Bob address: ", bob.address())
 
-const collectionName = "Third Collection"
-const collectionDesc = "Alice's simple collection"
-const tokenName = "First Token"
-const tokenDesc = "Create token example"
-
-console.log("\n=== Creating Collection and Token ===")
-// await rest.createUnlimitedCollection(alice, collectionDesc, collectionName, "https://pimenov.com.ua")
-const result = await rest.createToken(
-    alice,
-    collectionName,
-    tokenDesc,
-    tokenName,
-    1,
-    "https://aptos.dev/img/nyan.jpeg",
-    {
-        max_gas_amount: 2000
-    }
-)
-console.log(`See ${rest.url}/accounts/${alice.address()}/resources`)
-console.log(`See ${rest.url}/transactions/${rest.getLastTransaction().hash}`)
-
-
-// const token_id = await rest.getTokenId(alice.address(), collectionName, tokenName)
-// console.log(`Alice's token's identifier: ${token_id}`)
+// const collectionName = "Third Collection"
+// const collectionDesc = "Alice's simple collection"
+// const tokenName = "First Token"
+// const tokenDesc = "Create token example"
+//
+// console.log("\n=== Creating Collection and Token ===")
+// // await rest.createUnlimitedCollection(alice, collectionDesc, collectionName, "https://pimenov.com.ua")
+// const result = await rest.createToken(
+//     alice,
+//     collectionName,
+//     tokenDesc,
+//     tokenName,
+//     1,
+//     "https://aptos.dev/img/nyan.jpeg",
+//     {
+//         max_gas_amount: 2000
+//     }
+// )
 // console.log(`See ${rest.url}/accounts/${alice.address()}/resources`)
-//
+// console.log(`See ${rest.url}/transactions/${rest.getLastTransaction().hash}`)
+
+
+const token_id = await rest.getTokenId(alice.address(), "Zoo", "Bear")
+console.log(`Alice's token's identifier: ${token_id}`)
+
 // console.log("\n=== Transferring the token to Bob ===")
-// await rest.offerToken(alice, bob.address(), alice.address(), token_id, 1);
+// await rest.offerToken(alice, bob.address(), alice.address(), token_id, 2);
+// logObject(rest.lastTransaction)
 // await rest.claimToken(bob, alice.address(), alice.address(), token_id);
+// logObject(rest.lastTransaction)
 //
+// console.log(`See ${rest.url}/accounts/${alice.address()}/resources`)
 // console.log(`See ${rest.url}/accounts/${bob.address()}/resources`);

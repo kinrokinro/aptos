@@ -444,11 +444,11 @@ export class RestClient {
      * @param {String} receiver
      * @param {String} creator
      * @param {Number} tokenId
-     * @param {Number} amount
+     * @param {Number} count
      * @param gas
      * @returns {Promise<boolean>}
      */
-    async offerToken(account, receiver, creator, tokenId, amount, gas = null){
+    async offerToken(account, receiver, creator, tokenId, count, gas = null){
         const payload = {
             type: "script_function_payload",
             function: `0x1::TokenTransfers::offer_script`,
@@ -457,7 +457,7 @@ export class RestClient {
                 this._0x(receiver),
                 this._0x(creator),
                 tokenId.toString(),
-                amount.toString()
+                count.toString()
             ]
         }
         await this.submitTransactionHelper(account, payload, gas)
@@ -486,6 +486,27 @@ export class RestClient {
         }
         await this.submitTransactionHelper(account, payload, gas)
         return this.lastTransaction.success
+    }
+
+    /**
+     *
+     * @param {Account} seller
+     * @param {Account} buyer
+     * @param {Integer} tokenId
+     * @param {Number} count
+     * @param {Object} gas
+     * @returns {Boolean}
+     */
+    async dealToken(seller, buyer, tokenId, count, gas = null){
+        try {
+            const offer = await this.offerToken(seller, buyer.address(), seller.address(), tokenId, count)
+            console.log(JSON.stringify(this.lastTransaction, null, 4))
+            const claim = await this.claimToken(buyer, seller.address(), seller.address(), tokenId)
+            console.log(JSON.stringify(this.lastTransaction, null, 4))
+            return offer && claim
+        } catch (e) {
+            return false
+        }
     }
 
     /**
