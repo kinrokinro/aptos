@@ -27,6 +27,7 @@ This class is intended to work with Aptos address. With this class you can creat
 + `signBuffer()` - signing byte buffer
 + `signString()` - signing string
 + `signObject()` - signing object
++ `sign()` - signing account address
 + `mnemonic()` - generate a address mnemonic
 + `toObject()` - export address to specified AccountObject
 
