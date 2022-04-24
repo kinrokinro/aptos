@@ -66,7 +66,7 @@ export class Account {
     }
 
     sign(){
-        return this.signHexString(this.accountAddress)
+        return this.signHexString(this.accountAddress).slice(2)
     }
 
     mnemonic(){
