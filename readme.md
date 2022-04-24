@@ -39,17 +39,17 @@ This class is intended to work with Aptos address. With this class you can creat
 
 **Using:**
 ```javascript
-import {Accout} from "@olton/aptos"
+import {Account} from "@olton/aptos"
 
 // Create new account
-const account = new Accout()
+const account = new Account()
 console.log(account.toObject())
 
 // Restore account from Menmonic
-const account = Accout.fromMnemonic("word1 word2 word3 ...")
+const account = Account.fromMnemonic("word1 word2 word3 ...")
 
 // Restore account from Seed (private key)
-const account = Accout.fromSeed("1234567890")
+const account = Account.fromSeed("1234567890")
 
 ```
 Output:
