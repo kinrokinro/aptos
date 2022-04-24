@@ -10,6 +10,7 @@ const obj = {
 }
 
 console.log("Address: ", account.address())
+console.log("Sign Addr: ", account.sign())
 console.log("Sing str", account.signString(str))
 console.log("Sing str2", account.signString(str2))
 console.log("Sing obj", account.signObject(obj))

@@ -65,6 +65,10 @@ export class Account {
         return this.signString(JSON.stringify(obj))
     }
 
+    sign(){
+        return this.signHexString(this.accountAddress)
+    }
+
     mnemonic(){
         return entropyToMnemonic(this.privateKey())
     }
