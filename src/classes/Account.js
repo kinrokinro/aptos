@@ -51,14 +51,18 @@ export class Account {
         return new HexString(Buffer.from(signature).toString("hex").slice(0, 128)).toString();
     }
 
-    signString(hexString){
+    signHexString(hexString){
         const toSign = new HexString(hexString).toBuffer();
         return this.signBuffer(toSign);
     }
 
-    signObject(obj){
-        const toSign = new HexString(JSON.stringify(obj)).toBuffer();
+    signString(str, enc = 'utf8'){
+        const toSign = Buffer.from(str, enc);
         return this.signBuffer(toSign);
+    }
+
+    signObject(obj){
+        return this.signString(JSON.stringify(obj))
     }
 
     mnemonic(){
