@@ -1,5 +1,4 @@
 import {Account} from "../../src/index.js";
-import {Buffer} from "buffer";
 
 const account = Account.fromSeed(`aa04043e9956aac3f3dac073b47be0ae5925596c061ed45e5624c3bd1991425a`)
 const str = `рускій корабель - йди нахуй!`

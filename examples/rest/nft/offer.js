@@ -1,7 +1,7 @@
-import {Account, RestClient} from "../../../src/index.js";
+import {Account, Aptos} from "../../../src/index.js";
 import {REST_URL} from "../../helpers/consts.js";
 
-const rest = new RestClient(REST_URL)
+const rest = new Aptos(REST_URL)
 const alice = Account.fromMnemonic("area field scatter industry apology control friend sail admit mask sell spread increase prepare virtual pulse pact hobby olympic uphold anger solid kick ship")
 const bob = Account.fromMnemonic("present cage autumn crawl height giggle sorry fix inhale phrase wealth frequent myself protect quote sense stairs verify matrix manual spice silly annual field")
 

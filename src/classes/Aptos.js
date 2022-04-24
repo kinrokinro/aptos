@@ -10,7 +10,7 @@ const {sign} = Nacl
 export const COINS_SENT = 'sent_events'
 export const COINS_RECEIVED = 'received_events'
 
-export class RestClient {
+export class Aptos {
     url = ""
     gas = {
         "max_gas_amount": "1000",

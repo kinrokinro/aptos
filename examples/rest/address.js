@@ -1,8 +1,7 @@
-import {COINS_RECEIVED, RestClient} from "../../src/index.js";
+import {Aptos, COINS_RECEIVED, COINS_SENT} from "../../src/index.js";
 import {REST_URL} from "../helpers/consts.js";
-import {COINS_SENT} from "../../src/index.js";
 
-const rest = new RestClient(REST_URL)
+const rest = new Aptos(REST_URL)
 const address = "6a564403b90e83e0ecd9ec59446e4eed644a71fdd50441dacdf21fc03c265347"
 const hexAddress = "0x6a564403b90e83e0ecd9ec59446e4eed644a71fdd50441dacdf21fc03c265347"
 

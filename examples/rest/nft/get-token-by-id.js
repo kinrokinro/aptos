@@ -1,7 +1,7 @@
-import {Account, RestClient} from "../../../src/index.js";
+import {Account, Aptos} from "../../../src/index.js";
 import {REST_URL} from "../../helpers/consts.js";
 
-const aptos = new RestClient(REST_URL)
+const aptos = new Aptos(REST_URL)
 const alice = Account.fromMnemonic("area field scatter industry apology control friend sail admit mask sell spread increase prepare virtual pulse pact hobby olympic uphold anger solid kick ship")
 
 console.log("=== Account ===")
