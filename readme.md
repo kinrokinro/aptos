@@ -234,3 +234,25 @@ if (!claim) {
 console.log(`See ${aptos.url}/accounts/${alice.address()}/resources`)
 console.log(`See ${aptos.url}/accounts/${bob.address()}/resources`);
 ```
+Without **console.log**
+```javascript
+import {Aptos} from "@olton/aptos"
+
+const aptos = new Aptos(REST_URL)
+const alice = new Account()
+const bob = new Account()
+
+const collectionName = "First Collection"
+const collectionDesc = "Alice's simple collection"
+const tokenName = "First Token"
+const tokenDesc = "Simple token example"
+const tokenAmount = 1
+const tokenPrice = 100
+
+await aptos.setGasValue({max_gas_amount: 2000})
+await aptos.createUnlimitedCollection(alice, collectionDesc, collectionName, "https://aptos.dev")
+await aptos.createToken(alice, collectionName, tokenDesc, tokenName, tokenAmount, "https://aptos.dev/img/nyan.jpeg")
+const token_id = await aptos.getTokenId(alice.address(), "First Collection", "First Token")
+await aptos.dealToken(alice, bob, token_id, tokenAmount)
+await aptos.sendCoins(bob, alice.address(), tokenPrice)
+```
