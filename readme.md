@@ -168,13 +168,13 @@ const bob = new Account()
 
 await faucet.fundAddress(alice.address(), 1_000)
 
-const result = await rest.sendCoins(alice, bob.address(), 100)
+const result = await aptos.sendCoins(alice, bob.address(), 100)
 if (!result) {
     console.log("Error")
 } else {
     console.log("Success")
 }
-console.log(rest.getLastTransaction())
+console.log(aptos.getLastTransaction())
 ```
 
 ### NFT Example
@@ -199,7 +199,7 @@ const createCollectionResult = await aptos.createUnlimitedCollection(alice, coll
 if (!createCollectionResult) {
     throw new Error(aptos.getLastTransaction().vm_status)
 }
-const createTokenResult = await rest.createToken(
+const createTokenResult = await aptos.createToken(
     alice,
     collectionName,
     tokenDesc,
