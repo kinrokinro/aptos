@@ -500,9 +500,7 @@ export class RestClient {
     async dealToken(seller, buyer, tokenId, count, gas = null){
         try {
             const offer = await this.offerToken(seller, buyer.address(), seller.address(), tokenId, count)
-            console.log(JSON.stringify(this.lastTransaction, null, 4))
             const claim = await this.claimToken(buyer, seller.address(), seller.address(), tokenId)
-            console.log(JSON.stringify(this.lastTransaction, null, 4))
             return offer && claim
         } catch (e) {
             return false

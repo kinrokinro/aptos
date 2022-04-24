@@ -1,6 +1,6 @@
 {
     "name": "@olton/aptos",
-    "version": "0.1.22",
+    "version": "0.1.23",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/olton/aptos.git"
