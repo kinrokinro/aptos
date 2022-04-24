@@ -51,8 +51,13 @@ export class Account {
         return new HexString(Buffer.from(signature).toString("hex").slice(0, 128)).toString();
     }
 
-    signHexString(hexString){
+    signString(hexString){
         const toSign = new HexString(hexString).toBuffer();
+        return this.signBuffer(toSign);
+    }
+
+    signObject(obj){
+        const toSign = new HexString(JSON.stringify(obj)).toBuffer();
         return this.signBuffer(toSign);
     }
 

@@ -25,7 +25,8 @@ This class is intended to work with Aptos address. With this class you can creat
 + `authKey()` - return an auth key for the address
 + `pubKey()` - return a public key for the address
 + `signBuffer()` - signing byte buffer
-+ `signHexString()` - signing string
++ `signString()` - signing string
++ `signObject()` - signing object
 + `mnemonic()` - generate a address mnemonic
 + `toObject()` - export address to specified AccountObject
 
