@@ -703,7 +703,11 @@ export class Aptos {
                     result[_t.name].tokens.push({
                         ...t,
                         balance: 0,
-                        isCreator: true
+                        isCreator: true,
+                        collection: {
+                            name: _t.name,
+                            description: _t.description
+                        }
                     })
                 }
             }
