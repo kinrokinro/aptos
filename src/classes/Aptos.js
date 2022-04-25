@@ -446,11 +446,11 @@ export class Aptos {
      * @param {String} receiver
      * @param {String} creator
      * @param {Number} tokenId
-     * @param {Number} count
+     * @param {Number} amount
      * @param gas
      * @returns {Promise<boolean>}
      */
-    async offerToken(account, receiver, creator, tokenId, count, gas = null){
+    async offerToken(account, receiver, creator, tokenId, amount = 1, gas = null){
         const payload = {
             type: "script_function_payload",
             function: `0x1::TokenTransfers::offer_script`,
@@ -459,7 +459,7 @@ export class Aptos {
                 this._0x(receiver),
                 this._0x(creator),
                 tokenId.toString(),
-                count.toString()
+                amount.toString()
             ]
         }
         await this.submitTransactionHelper(account, payload, gas)
@@ -494,15 +494,15 @@ export class Aptos {
      *
      * @param {Account} seller
      * @param {Account} buyer
-     * @param {Integer} tokenId
-     * @param {Number} count
+     * @param {Object} id = {creator, tokenId}
+     * @param {Number} amount
      * @param {Object} gas
      * @returns {Boolean}
      */
-    async dealToken(seller, buyer, tokenId, count, gas = null){
+    async dealToken(seller, buyer, {creator, tokenId}, amount = 1, gas = null){
         try {
-            const offer = await this.offerToken(seller, buyer.address(), seller.address(), tokenId, count)
-            const claim = await this.claimToken(buyer, seller.address(), seller.address(), tokenId)
+            const offer = await this.offerToken(seller, buyer.address(), creator, tokenId, amount)
+            const claim = await this.claimToken(buyer, seller.address(), creator, tokenId)
             return offer && claim
         } catch (e) {
             return false

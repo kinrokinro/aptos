@@ -10,7 +10,8 @@ console.log("=== Account ===")
 console.log("Alice address: ", alice.address())
 console.log("Bob address: ", bob.address())
 
+const creator = alice.address()
 const tokenId = 3
 const count = 1
 
-await aptos.dealToken(alice, bob, tokenId, count)
+await aptos.dealToken(alice, bob, {creator, tokenId}, count)
