@@ -13,6 +13,6 @@ log("Bob address: ", bob.address())
 log("\n=== Alice Collections ===")
 logObject( await rest.getCollections(alice.address()) )
 
-log("\n=== Bob Collections ===")
-logObject( await rest.getCollections(bob.address()) )
+// log("\n=== Bob Collections ===")
+// logObject( await rest.getCollections(bob.address()) )
 

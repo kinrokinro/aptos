@@ -658,7 +658,22 @@ export class Aptos {
      */
     async getOwnedTokens(owner){
         const gallery = await this.getGallery(owner)
+        const collections = await this.getCollections(owner)
         const result = {}
+        const temp = []
+
+        for(let c of collections) {
+            const _t = c.value
+            if (!result[_t.name]) {
+                result[_t.name] = {
+                    name: _t.name,
+                    description: _t.description,
+                    uri: _t.uri,
+                    tokens: []
+                }
+            }
+        }
+
         for(let t of gallery) {
             const _t = t.value
             if (!result[_t.collection]) {
@@ -669,6 +684,9 @@ export class Aptos {
                     tokens: []
                 }
             }
+
+            temp.push(`${_t.id.creation_num}::${_t.id.addr}`)
+
             const token = {
                 ...await this.getTokenFromCollection(_t.id.addr, _t.collection, _t.name),
                 balance: _t.balance,
@@ -677,6 +695,20 @@ export class Aptos {
             result[_t.collection].description = token.collection.description
             result[_t.collection].tokens.push(token)
         }
+
+        for(let c of collections) {
+            const _t = c.value
+            for (let t of _t.tokens.data) {
+                if (!temp.includes(`${t.value.id.creation_num}::${t.value.id.addr}`)) {
+                    result[_t.name].tokens.push({
+                        ...t,
+                        balance: 0,
+                        isCreator: true
+                    })
+                }
+            }
+        }
+
         for(let c in result) {
             result[c]["length"] = result[c]["tokens"].length
         }
