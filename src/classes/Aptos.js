@@ -662,14 +662,23 @@ export class Aptos {
         for(let t of gallery) {
             const _t = t.value
             if (!result[_t.collection]) {
-                result[_t.collection] = []
+                result[_t.collection] = {
+                    name: _t.collection,
+                    description: "",
+                    uri: "",
+                    tokens: []
+                }
             }
             const token = {
                 ...await this.getTokenFromCollection(_t.id.addr, _t.collection, _t.name),
                 balance: _t.balance,
                 isCreator: _t.id.addr === owner
             }
-            result[_t.collection].push(token)
+            result[_t.collection].description = token.collection.description
+            result[_t.collection].tokens.push(token)
+        }
+        for(let c in result) {
+            result[c]["length"] = result[c]["tokens"].length
         }
         return result
     }
