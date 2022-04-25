@@ -625,25 +625,30 @@ export class Aptos {
      * @param token
      * @returns {Promise<null|*|any>}
      */
-    async getTokenFromCollection(creator, collectionName, token){
+    async getTokenFromCollection(creator, collectionName, tokenId){
+        let token = null
         const collection = await this.getCollection(creator, collectionName)
         if (!collection) {
-            return null
+            return token
         }
         for(let t of collection.tokens.data){
-            if (isNaN(token)) {
+            if (isNaN(tokenId)) {
                 // Token Name
-                if (t.value.name === token) {
-                    return t
+                if (t.value.name === tokenId) {
+                    token = t
                 }
             } else {
                 // Token id
-                if (+(t.value.id.creation_num) === +(token)) {
-                    return t
+                if (+(t.value.id.creation_num) === +(tokenId)) {
+                    token = t
                 }
             }
+            if (token) token["collection"] = {
+                name: collectionName,
+                description: collection.description
+            }
         }
-        return null
+        return token
     }
 
     /**
