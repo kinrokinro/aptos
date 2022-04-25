@@ -141,6 +141,8 @@ NFT:
 + `getTokensAll()`
 + `getToken()`
 + `getTokenById()`
++ `getOwnedTokens()`
++ `getTokenFromCollection()`
 + `getGallery()`
 + `getGallery(..., 'object'')`
 + `getPendingClaims()`

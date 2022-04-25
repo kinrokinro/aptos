@@ -619,6 +619,57 @@ export class Aptos {
     }
 
     /**
+     * Get token from collection by token name or token creation num
+     * @param creator
+     * @param collectionName
+     * @param token
+     * @returns {Promise<null|*|any>}
+     */
+    async getTokenFromCollection(creator, collectionName, token){
+        const collection = await this.getCollection(creator, collectionName)
+        if (!collection) {
+            return null
+        }
+        for(let t of collection.tokens.data){
+            if (isNaN(token)) {
+                // Token Name
+                if (t.value.name === token) {
+                    return t
+                }
+            } else {
+                // Token id
+                if (+(t.value.id.creation_num) === +(token)) {
+                    return t
+                }
+            }
+        }
+        return null
+    }
+
+    /**
+     * Get Owned tokens in token stricture with additional props
+     * @param owner
+     * @returns {Promise<{}>}
+     */
+    async getOwnedTokens(owner){
+        const gallery = await this.getGallery(owner)
+        const result = {}
+        for(let t of gallery) {
+            const _t = t.value
+            if (!result[_t.collection]) {
+                result[_t.collection] = []
+            }
+            const token = {
+                ...await this.getTokenFromCollection(_t.id.addr, _t.collection, _t.name),
+                balance: _t.balance,
+                isCreator: _t.id.addr === owner
+            }
+            result[_t.collection].push(token)
+        }
+        return result
+    }
+
+    /**
      * Get tokens from collection
      * @param creator
      * @param collectionName
