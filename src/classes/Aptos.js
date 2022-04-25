@@ -9,6 +9,8 @@ const {sign} = Nacl
 
 export const COINS_SENT = 'sent_events'
 export const COINS_RECEIVED = 'received_events'
+export const GALLERY_RETURN_DEFAULT = 'default'
+export const GALLERY_RETURN_OBJECT = 'object'
 
 export class Aptos {
     url = ""
@@ -669,25 +671,25 @@ export class Aptos {
     /**
      * Get Gallery, return array of elements
      * @param address
-     * @returns {Promise<*[]|*>}
+     * @param ret
+     * @returns {Promise<*[]>}
      */
-    async getGallery(address){
+    async getGallery(address, ret = GALLERY_RETURN_DEFAULT){
         const resource = await this.getAccountResource(address, `0x1::Token::Gallery`)
 
         if (!resource) {
-            return []
+            return ret === GALLERY_RETURN_DEFAULT ? [] : {}
         }
 
-        return resource["gallery"]["data"]
-    }
-
-    /**
-     * Get available tokens, this is synonym to getGallery()
-     * @param address
-     * @returns {Promise<*[]|*>}
-     */
-    async availableTokens(address){
-        return await this.getGallery(address)
+        const data = resource["gallery"]["data"]
+        if (ret === GALLERY_RETURN_DEFAULT) {
+            return data
+        }
+        const tokens = {}
+        for (let t of data) {
+            tokens[`${t.key.creation_num}::${t.key.addr}`] = t.value
+        }
+        return tokens
     }
 
     /**

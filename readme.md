@@ -136,12 +136,14 @@ NFT:
 + `getTokenId()`
 + `collectionExists()`
 + `getCollection()`
++ `getCollections()`
 + `getTokens()`
 + `getTokensAll()`
 + `getToken()`
 + `getTokenById()`
 + `getGallery()`
-+ `availableTokens()`
++ `getGallery(..., 'object'')`
++ `getPendingClaims()`
 
 Methods to work with transactions
 + `generateTransaction()`
