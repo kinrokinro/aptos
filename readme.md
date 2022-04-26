@@ -143,8 +143,10 @@ NFT:
 + `getTokenById()`
 + `getOwnedTokens()`
 + `getTokenFromCollection()`
++ `getTokenFromOwner()`
++ `getTokenFromCreator()`
 + `getGallery()`
-+ `getGallery(..., 'object'')`
++ `getGallery(..., 'object')`
 + `getPendingClaims()`
 
 Methods to work with transactions

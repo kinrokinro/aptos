@@ -652,7 +652,48 @@ export class Aptos {
     }
 
     /**
-     * Get Owned tokens in token stricture with additional props
+     * Get token from creator
+     * @param {String} owner
+     * @param {String|Integer} tokenId
+     * @param {Boolean} checkCreator
+     * @returns {Promise<null>}
+     */
+    async getTokenFromOwner(owner, tokenId, checkCreator = false){
+        const collections = await this.getOwnedTokens(owner)
+        let token = null
+        for (let col of Object.values(collections)) {
+            for(let tok of col.tokens) {
+                if (checkCreator) {
+                    if (!tok.isCreator) continue
+                }
+                if (isNaN(tokenId)) {
+                    // Token Name
+                    if (tok.value.name === tokenId) {
+                        token = tok
+                    }
+                } else {
+                    // Token id
+                    if (+(tok.value.id.creation_num) === +(tokenId)) {
+                        token = tok
+                    }
+                }
+            }
+        }
+        return token
+    }
+
+    /**
+     * Get token from creator
+     * @param creator
+     * @param tokenId
+     * @returns {Promise<null>}
+     */
+    async getTokenFromCreator(creator, tokenId){
+        return await this.getTokenFromOwner(creator, tokenId, true)
+    }
+
+    /**
+     * Get Owned tokens in token structure with additional props (0x1::Token::Gallery and 0x1::Token::Collections)
      * @param owner
      * @returns {Promise<{}>}
      */
@@ -724,7 +765,7 @@ export class Aptos {
     }
 
     /**
-     * Get tokens from collection
+     * Get tokens from collection (used resource 0x1::Token::Collections)
      * @param creator
      * @param collectionName
      * @returns {Promise<*[]|*>}
@@ -738,7 +779,7 @@ export class Aptos {
     }
 
     /**
-     * Get All Tokens
+     * Get All Tokens (used resource 0x1::Token::Collections)
      * @param creator
      * @returns {Promise<{}>}
      */
@@ -755,7 +796,7 @@ export class Aptos {
     }
 
     /**
-     * Get token from collection, return token or false
+     * Get token from collection, return token or false (used resource 0x1::Token::Collections)
      * @param address
      * @param collectionName
      * @param tokenName
