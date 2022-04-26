@@ -11,5 +11,5 @@ console.log("Bob address: ", bob.address())
 
 console.log("Alice's tokens")
 console.log(JSON.stringify(await aptos.getOwnedTokens(alice.address()), null, 4))
-// console.log("Bob's tokens")
-// console.log(JSON.stringify(await aptos.getOwnedTokens(bob.address()), null, 4))
+console.log("Bob's tokens")
+console.log(JSON.stringify(await aptos.getOwnedTokens(bob.address()), null, 4))

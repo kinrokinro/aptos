@@ -664,7 +664,7 @@ export class Aptos {
 
         for(let c of collections) {
             const _t = c.value
-            result[_t.name] = {
+            result[`1::${_t.name}`] = {
                 name: _t.name,
                 description: _t.description,
                 isOwner: true,
@@ -675,9 +675,15 @@ export class Aptos {
 
         for(let t of gallery) {
             const _t = t.value
-            if (!result[_t.collection]) {
-                result[_t.collection] = {
-                    name: _t.collection,
+
+            temp.push(`${_t.id.creation_num}::${_t.id.addr}`)
+            const token = await this.getTokenFromCollection(_t.id.addr, _t.collection, _t.name)
+            token.balance = _t.balance
+            token.isCreator = _t.id.addr === owner
+
+            if (!token.isCreator) {
+                result[`0::${_t.collection}`] = {
+                    name: "",
                     description: "",
                     isOwner: false,
                     uri: "",
@@ -685,22 +691,18 @@ export class Aptos {
                 }
             }
 
-            temp.push(`${_t.id.creation_num}::${_t.id.addr}`)
+            const collection = (token.isCreator ? "1::" : "0::") + _t.collection
 
-            const token = {
-                ...await this.getTokenFromCollection(_t.id.addr, _t.collection, _t.name),
-                balance: _t.balance,
-                isCreator: _t.id.addr === owner
-            }
-            result[_t.collection].description = token.collection.description
-            result[_t.collection].tokens.push(token)
+            result[collection].name = token.collection.name
+            result[collection].description = token.collection.description
+            result[collection].tokens.push(token)
         }
 
         for(let c of collections) {
             const _t = c.value
             for (let t of _t.tokens.data) {
                 if (!temp.includes(`${t.value.id.creation_num}::${t.value.id.addr}`)) {
-                    result[_t.name].tokens.push({
+                    result[`1::${_t.name}`].tokens.push({
                         ...t,
                         balance: 0,
                         isCreator: true,
