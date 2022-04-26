@@ -26,6 +26,18 @@ export class Aptos {
         this.setGasValue(gas)
     }
 
+    _0x(a){
+        if (a instanceof Account) {
+            return a.address()
+        } else if (typeof a === "string") {
+            return hexAddress(a)
+        } else if (typeof a === "object" && a.address) {
+            return hexAddress(a.address)
+        } else {
+            throw new Error("Value is not an Aptos address or compatible object!")
+        }
+    }
+
     /**
      * Set gas values
      * @param gas
@@ -72,6 +84,8 @@ export class Aptos {
         return await this.exec(``)
     }
 
+    /* ====================== Account ==================================== */
+
     async getAccount(addr){
         return await this.exec(`accounts/${this._0x(addr)}`)
     }
@@ -98,8 +112,8 @@ export class Aptos {
         }
     }
 
-    async getAccountBalance(add, coin = 'TestCoin', query = {version: null}){
-        const res = await this.getAccountResource(add, `0x1::${coin}::Balance`, query)
+    async getAccountBalance(addr, coin = 'TestCoin', query = {version: null}){
+        const res = await this.getAccountResource(addr, `0x1::${coin}::Balance`, query)
         return res ? res["coin"]["value"] : 0
     }
 
@@ -155,6 +169,31 @@ export class Aptos {
         return await this.getAccountTransactions(addr, {limit, start})
     }
 
+    /**
+     * Rotate account auth key
+     * @param {Account} account
+     * @param {String} newAuthKey
+     * @param gas
+     * @returns {Promise<string|Event|*>}
+     */
+    async rotateAccountAuthKey(account, newAuthKey, gas = null){
+        assert(newAuthKey, "Value for new auth key required!")
+
+        const payload = {
+            type: "script_function_payload",
+            function: "0x1::Account::rotate_authentication_key",
+            type_arguments: [],
+            arguments: [
+                newAuthKey,
+            ]
+        }
+
+        await this.submitTransactionHelper(account, payload, gas)
+        return this.lastTransaction.success
+    }
+
+    /* ======================== General =================================*/
+
     async getEvents(eventKey){
         return await this.exec(`events/${hexAddress(eventKey)}`)
     }
@@ -166,6 +205,8 @@ export class Aptos {
     async getTransaction(hash, query = {limit: 25, start: 0}){
         return await this.exec(`transactions/${hash}`)
     }
+
+    /* ===================== Transaction routines =========================== */
 
     /**
      * Generates a transaction request that can be submitted to produce a raw transaction that
@@ -344,18 +385,6 @@ export class Aptos {
         }
         await this.submitTransactionHelper(accountFrom, payload, gas)
         return this.lastTransaction.success
-    }
-
-    _0x(a){
-        if (a instanceof Account) {
-            return a.address()
-        } else if (typeof a === "string") {
-            return hexAddress(a)
-        } else if (typeof a === "object" && a.address) {
-            return hexAddress(a.address)
-        } else {
-            throw new Error("Value is not an Aptos address or compatible object!")
-        }
     }
 
     /* ===================================== NFT ====================================== */

@@ -12,7 +12,7 @@ export class Account {
     accountAddress = ""
     accountAuthKey = ""
 
-    constructor(privateKey){
+    constructor(privateKey, address){
         if (privateKey) {
             if (typeof privateKey === "string") {
                 privateKey = Uint8Array.from(Buffer.from(privateKey, 'hex'))
@@ -21,7 +21,7 @@ export class Account {
         } else {
             this.signingKey = sign.keyPair()
         }
-        this.accountAddress = new HexString(this.authKey()).hex()
+        this.accountAddress = new HexString(address || this.authKey()).hex()
     }
 
     privateKey(){

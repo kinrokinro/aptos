@@ -3,11 +3,11 @@ import fetch from "cross-fetch";
 
 export class FaucetClient {
     url = "";
-    restClient = null;
+    aptos = null;
 
-    constructor(url = "", restClient) {
+    constructor(url = "", aptos) {
         this.url = url
-        this.restClient = restClient
+        this.aptos = aptos
     }
 
     /** This creates an account if it does not exist and mints the specified amount of
@@ -26,7 +26,13 @@ export class FaucetClient {
         }
 
         for (const tnxHash of tnxHashesArray) {
-            await this.restClient.waitForTransaction(tnxHash);
+            await this.aptos.waitForTransaction(tnxHash);
         }
+
+        return tnxHashesArray.length === 0 ?
+            null :
+            tnxHashesArray.length === 1 ?
+                tnxHashesArray[0] :
+                tnxHashesArray
     }
 }
