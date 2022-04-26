@@ -12,28 +12,28 @@ console.log("Bob address: ", bob.address())
 
 // const collectionName = "Third Collection"
 // const collectionDesc = "Alice's simple collection"
-// const tokenName = "First Token"
-// const tokenDesc = "Create token example"
+const tokenName = "First Token"
+const tokenDesc = "Create token example"
 //
 // console.log("\n=== Creating Collection and Token ===")
 // // await rest.createUnlimitedCollection(alice, collectionDesc, collectionName, "https://pimenov.com.ua")
-// const result = await rest.createToken(
-//     alice,
-//     collectionName,
-//     tokenDesc,
-//     tokenName,
-//     1,
-//     "https://aptos.dev/img/nyan.jpeg",
-//     {
-//         max_gas_amount: 2000
-//     }
-// )
+const result = await rest.createToken(
+    bob,
+    "Cars",
+    tokenDesc,
+    tokenName,
+    1,
+    "https://aptos.dev/img/nyan.jpeg",
+    {
+        max_gas_amount: 2000
+    }
+)
 // console.log(`See ${rest.url}/accounts/${alice.address()}/resources`)
 // console.log(`See ${rest.url}/transactions/${rest.getLastTransaction().hash}`)
 
 
-const token_id = await rest.getTokenId(alice.address(), "Zoo", "Bear")
-console.log(`Alice's token's identifier: ${token_id}`)
+const token_id = await rest.getTokenId(bob.address(), "Cars", "First Token")
+console.log(`Bob's token's identifier: ${token_id}`)
 
 // console.log("\n=== Transferring the token to Bob ===")
 // await rest.offerToken(alice, bob.address(), alice.address(), token_id, 2);

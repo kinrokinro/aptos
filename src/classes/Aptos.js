@@ -664,13 +664,12 @@ export class Aptos {
 
         for(let c of collections) {
             const _t = c.value
-            if (!result[_t.name]) {
-                result[_t.name] = {
-                    name: _t.name,
-                    description: _t.description,
-                    uri: _t.uri,
-                    tokens: []
-                }
+            result[_t.name] = {
+                name: _t.name,
+                description: _t.description,
+                isOwner: true,
+                uri: _t.uri,
+                tokens: []
             }
         }
 
@@ -680,6 +679,7 @@ export class Aptos {
                 result[_t.collection] = {
                     name: _t.collection,
                     description: "",
+                    isOwner: false,
                     uri: "",
                     tokens: []
                 }
