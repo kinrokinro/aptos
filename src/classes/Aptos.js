@@ -669,6 +669,7 @@ export class Aptos {
                 description: _t.description,
                 isOwner: true,
                 uri: _t.uri,
+                maximum: _t.maximum.vec.length ? +(_t.maximum.vec[0]) : 0,
                 tokens: []
             }
         }
@@ -687,6 +688,7 @@ export class Aptos {
                     description: "",
                     isOwner: false,
                     uri: "",
+                    maximum: -1,
                     tokens: []
                 }
             }
