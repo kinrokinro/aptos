@@ -654,11 +654,11 @@ export class Aptos {
     /**
      * Get token from creator
      * @param {String} owner
-     * @param {String|Integer} tokenId
+     * @param {Object} tokenId = {addr, num}
      * @param {Boolean} checkCreator
      * @returns {Promise<null>}
      */
-    async getTokenFromOwner(owner, tokenId, checkCreator = false){
+    async getTokenFromOwner(owner, {addr, num}, checkCreator = false){
         const collections = await this.getOwnedTokens(owner)
         let token = null
         for (let col of Object.values(collections)) {
@@ -666,16 +666,11 @@ export class Aptos {
                 if (checkCreator) {
                     if (!tok.isCreator) continue
                 }
-                if (isNaN(tokenId)) {
-                    // Token Name
-                    if (tok.value.name === tokenId) {
-                        token = tok
-                    }
-                } else {
-                    // Token id
-                    if (+(tok.value.id.creation_num) === +(tokenId)) {
-                        token = tok
-                    }
+                const tokenNum = +(tok.value.id.creation_num)
+                const tokenAddr = tok.value.id.addr
+
+                if (tokenNum === +num && tokenAddr === addr) {
+                    token = tok
                 }
             }
         }
@@ -684,8 +679,8 @@ export class Aptos {
 
     /**
      * Get token from creator
-     * @param creator
-     * @param tokenId
+     * @param {String} creator
+     * @param {Object} tokenId = {addr, num}
      * @returns {Promise<null>}
      */
     async getTokenFromCreator(creator, tokenId){
