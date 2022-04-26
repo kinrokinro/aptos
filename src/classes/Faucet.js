@@ -1,5 +1,6 @@
 import assert from "assert"
 import fetch from "cross-fetch";
+import {HexString} from "./HexString.js";
 
 export class FaucetClient {
     url = "";
@@ -12,8 +13,8 @@ export class FaucetClient {
 
     /** This creates an account if it does not exist and mints the specified amount of
      coins into that account */
-    async fundAddress(authKey = "", amount = 0) {
-        const url = `${this.url}/mint?amount=${amount}&auth_key=${authKey}`
+    async fundAddress(address = "", amount = 0) {
+        const url = `${this.url}/mint?amount=${amount}&address=${new HexString(address).noPrefix()}`
         const response = await fetch(url, {method: "POST"})
         if (response.status !== 200) {
             assert(response.status === 200, await response.text());

@@ -110,6 +110,7 @@ The next methods provide work with Aptos account:
 + `getAccountEventsReceivedCoinsLast()`
 + `getAccountTransactions()`
 + `getAccountTransactionsLast()`
++ `rotateAccountAuthKey()`
 
 General purpose methods:
 + `setGasValue()`
