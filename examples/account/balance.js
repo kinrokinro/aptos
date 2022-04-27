@@ -12,17 +12,17 @@ const bob = new Account(
     "0xdf1f220bc6d49959c84757ca6878be2dc1da31b963b024f158544dde7df35cb5"
 )
 
-console.log("0) Bob Account: ", await aptos.getAccount(bob.address()))
-
-console.log("1) Bob address: ", bob.address())
-console.log("2) Bob authkey: ", bob.authKey())
-
-console.log("3) Bob balance: ", await aptos.getAccountBalance(bob.address()))
-
-console.log("Fund for new auth", bob.authKey())
-console.log("Fund hash", await faucet.fundAddress(bob.authKey(), 100))
-console.log("4) Bob balance: ", await aptos.getAccountBalance(bob.address()))
-
-console.log("Fund for old auth", oldAuth)
-console.log("Fund hash", await faucet.fundAddress(oldAuth, 100))
-console.log("5) Bob balance: ", await aptos.getAccountBalance(bob.address()))
+console.log("0) Bob Account: ", (await aptos.getAccount(bob.address())).authentication_key)
+//
+// console.log("1) Bob address: ", bob.address())
+// console.log("2) Bob authkey: ", bob.authKey())
+//
+// console.log("3) Bob balance: ", await aptos.getAccountBalance(bob.address()))
+//
+// console.log("Fund for new auth", bob.authKey())
+// console.log("Fund hash", await faucet.fundAddress(bob.authKey(), 100))
+// console.log("4) Bob balance: ", await aptos.getAccountBalance(bob.address()))
+//
+// console.log("Fund for old auth", oldAuth)
+// console.log("Fund hash", await faucet.fundAddress(oldAuth, 100))
+// console.log("5) Bob balance: ", await aptos.getAccountBalance(bob.address()))

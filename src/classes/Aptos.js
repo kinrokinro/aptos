@@ -747,7 +747,7 @@ export class Aptos {
             token.balance = _t.balance
             token.isCreator = _t.id.addr === owner
 
-            if (!token.isCreator) {
+            if (!token.isCreator && !result[`0::${_t.collection}`]) {
                 result[`0::${_t.collection}`] = {
                     name: "",
                     description: "",

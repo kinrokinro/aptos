@@ -11,6 +11,9 @@ log("Alice address: ", alice.address())
 log("Bob address: ", bob.address())
 
 log("\n=== Bob Tokens ===")
-logObject( await aptos.getTokenId(bob.address(), "Cars", "Taxi") )
+// logObject( await aptos.getTokenId(bob.address(), "Cars", "Taxi") )
+logObject( await aptos.getTokenFromOwner(
+    "0x69564cf6bdebf6a1c231f4d281e2658b6c2f02e5087589ee3e47334b56c3f669", "Cars", "Taxi")
+)
 
 
